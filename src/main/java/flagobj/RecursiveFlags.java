@@ -2,21 +2,17 @@ package flagobj;
 
 import listnode.BaseRecursible;
 import listnode.ListNode;
-import listnode.NonRecursiveList;
+import listnode.RecursiveList;
 
-public class Flags extends NonRecursiveList implements IFlags {
+public class RecursiveFlags extends RecursiveList implements IFlags {
     @Override
     public String toString(){
         return "Wheee!";
     }
-    @Override
-    public void disp(){
-        System.out.println(this.toString());
-    }
 
     @Override
     public BaseRecursible newList() {
-        return new Flags();
+        return new RecursiveFlags();
     }
     @Override
     public boolean meetsCriteria(ListNode item, Object criteria) {

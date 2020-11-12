@@ -2,30 +2,10 @@ package listnode;
 
 import flagobj.Flags;
 import flagobj.IFlags;
+import flagobj.RecursiveFlags;
 import toktools.Tokenizer;
 
 public class ItrListTest {
-    private static class Itr <T> extends ItrList{
-        public Itr(){
-            super();
-        }
-        public Itr(T[] array){
-            this();
-            for(T item : array){
-                this.pushBack(new ListNode<>(item));
-            }
-        }
-
-        @Override
-        public boolean meetsCriteria(ListNode item, Object criteria) {
-            return item.payload.equals(criteria);
-        }
-
-        @Override
-        public ItrList newList() {
-            return new Itr();
-        }
-    }
 
     private static FlatList<String> getStringList(String text){
         Tokenizer tok = new Tokenizer();
@@ -40,11 +20,11 @@ public class ItrListTest {
     }
 
     public static void testItr(){
-        ItrList<String> list = getStringList("This is a sentence   with a space and a period.  ");
+        BaseRecursible<String> list = getStringList("This is a sentence   with a space and a period.  ");
         list.disp();
     }
     public static void testItrManip(){
-        ItrList<String> list = getStringList("This is a sentence   with a space and a period.  ");
+        IRecursible<String> list = getStringList("This is a sentence   with a space and a period.  ");
         list.pushIn(6, new ListNode<>("redundant"));
         list.pushIn(3, new ListNode<>("long"));
         list.disp();
@@ -57,17 +37,17 @@ public class ItrListTest {
         list.disp();
     }
     public static void testSublist(){
-        ItrList<String> list = getStringList("This is a sentence   with a space and a period.  ");
-        ItrList<String> sublist = list.sublist(2, 5);
+        BaseRecursible<String> list = getStringList("This is a sentence   with a space and a period.  ");
+        BaseRecursible<String> sublist = list.sublist(2, 5);
         sublist.disp();
     }
     public static void testSublistCriteria(){
-        ItrList<String> list = getStringList("This is a sentence   with a space and a period.  ");
-        ItrList<String> sublist = list.sublist("a");
+        BaseRecursible<String> list = getStringList("This is a sentence   with a space and a period.  ");
+        BaseRecursible<String> sublist = list.sublist("a");
         sublist.disp();
     }
     public static void testItrInteger(){
-        ItrList<Integer> list = getIntegerList();
+        BaseRecursible<Integer> list = getIntegerList();
         list.disp();
 
         System.out.println("pop: " + list.popBack());
@@ -84,16 +64,19 @@ public class ItrListTest {
         FlatList<String> put2 = getStringList("Munchkins are taking over");
         FlatList<String> put3 = new FlatList<>();
 
-        RecursiveList<ItrList> list = new RecursiveList<>();
-        list.pushBack(new ListNode<>(put0));
-        list.pushBack(new ListNode<>(put1));
+        RecursiveList<BaseRecursible> put4 = new RecursiveFlags();
+        put4.pushBack(new ListNode<>(put0));
+        put4.pushBack(new ListNode<>(put1));
+        RecursiveList<BaseRecursible> list = new RecursiveFlags();
+        list.pushBack(new ListNode<>(put4));
         list.pushBack(new ListNode<>(put2));
+        list.pushBack(new ListNode<>(new Flags()));
         list.disp();
     }
     public static void testFlagObj(){
         FlatList<String> put0 = getStringList("This is a sentence   with a space and a period.  ");
         IFlags obj1 = new Flags();
-        RecursiveList<ItrList> list = new RecursiveList<>();
+        RecursiveList<BaseRecursible> list = new RecursiveFlags();
         list.pushBack(new ListNode<>(put0));
         list.pushBack(new ListNode<>(obj1));
         list.disp();

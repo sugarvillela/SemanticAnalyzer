@@ -1,6 +1,6 @@
 package listnode;
 
-public abstract class ItrList <T> implements IRecursible {
+public abstract class BaseRecursible<T> implements IRecursible {
     protected ListNode<T> head, tail;           // for doubly linked list role
     protected ListNode<T> curr;                 // for accessor and iterator
     protected int top;//                        // top = length-1
@@ -8,7 +8,7 @@ public abstract class ItrList <T> implements IRecursible {
     protected boolean sizeChanged;              // trigger clear range on rewind
     protected boolean throwOnErr;
 
-    ItrList(){
+    BaseRecursible(){
         curr = head = tail = null;
         top = -1;
         rowi = 0;
@@ -68,6 +68,11 @@ public abstract class ItrList <T> implements IRecursible {
         );
     }
 
+    @Override
+    public int size(){
+        return top + 1;
+    }
+    @Override
     public boolean seek( int index ){
         index = this.fixNegIndex(index);
         System.out.printf("seek index=%d\n", index );
@@ -94,18 +99,22 @@ public abstract class ItrList <T> implements IRecursible {
         return false;
     }
 
+    @Override
     public ListNode<T> peekFront() {
         return head;
     }
+    @Override
     public ListNode<T> peekBack() {
         return tail;
     }
+    @Override
     public ListNode<T> peekIn( int index ) {
         return (this.seek(index))?
                 curr : null;
     }
 
-    public void pushFront(ListNode<T> newHead){
+    @Override
+    public void pushFront(ListNode newHead){
         newHead.next = head;
         if(top < 0){   // empty list
             tail = newHead;
@@ -113,7 +122,8 @@ public abstract class ItrList <T> implements IRecursible {
         head = newHead;
         this.incSize();
     }
-    public void pushBack (ListNode<T> newTail){
+    @Override
+    public void pushBack (ListNode newTail){
         if(top < 0){
             this.pushFront(newTail);
         }
@@ -124,7 +134,8 @@ public abstract class ItrList <T> implements IRecursible {
             this.incSize();
         }
     }
-    public void pushIn( int index, ListNode<T> node ){
+    @Override
+    public void pushIn(int index, ListNode node ){
         if( !this.seek( index )){
             return;
         }
@@ -137,6 +148,7 @@ public abstract class ItrList <T> implements IRecursible {
         this.incSize();
     }
 
+    @Override
     public ListNode<T> popFront(){
         if( top >= 0 ){
             ListNode<T> victim = head;
@@ -151,6 +163,7 @@ public abstract class ItrList <T> implements IRecursible {
             return null;
         }
     }
+    @Override
     public ListNode<T> popBack(){
         if( top >= 0 ){
             ListNode<T> victim = tail;
@@ -165,6 +178,7 @@ public abstract class ItrList <T> implements IRecursible {
             return null;
         }
     }
+    @Override
     public ListNode<T> popIn( int index) {
         if( index==0 ){
             return this.popFront();
@@ -188,9 +202,11 @@ public abstract class ItrList <T> implements IRecursible {
     }
 
     /* Iterator: go forward or back within an inclusive range */
+    @Override
     public void setRange(int start, int end){
         this.setRange(start, end, 1);
     }
+    @Override
     public void setRange(int start, int end, int increment){
         this.start = start;
         this.end = end;
@@ -198,6 +214,7 @@ public abstract class ItrList <T> implements IRecursible {
         this.sizeChanged = false;// to preserve settings on rewind
         System.out.printf("setRange: top=%d, start=%d, end=%d, inci=%d", top, start, end, inci);
     }
+    @Override
     public void clearRange(){
         start = 0;
         end = top;
@@ -216,6 +233,7 @@ public abstract class ItrList <T> implements IRecursible {
         rowi += inci;
     }
 
+    @Override
     public void rewind(){
         if(sizeChanged){// clears iter range if size changed
             System.out.println("sizeChanged");
@@ -225,13 +243,16 @@ public abstract class ItrList <T> implements IRecursible {
         System.out.println();
         this.seek((inci < 0)? end : start);
     }
+    @Override
     public int key(){//iterator index
         return rowi - inci;//assume this is called after incCur()
     }
+    @Override
     public boolean hasNext() {
         //System.out.printf("hasNext=%b\n", curr != null);
         return start <= rowi && rowi <= end;
     }
+    @Override
     public ListNode<T> next() {
         ListNode<T> ret = curr;
         //System.out.printf("next: rowi=%d\n", rowi );
@@ -240,8 +261,9 @@ public abstract class ItrList <T> implements IRecursible {
     }
 
     /* Splitter */
-    public ItrList sublist(int lo, int hi){
-        ItrList<T> out = newList();
+    @Override
+    public BaseRecursible sublist(int lo, int hi){
+        BaseRecursible<T> out = newList();
         this.setRange(lo, hi, 1);
         this.rewind();
         while(this.hasNext()){
@@ -249,8 +271,9 @@ public abstract class ItrList <T> implements IRecursible {
         }
         return out;
     }
-    public ItrList sublist(Object criteria){
-        ItrList<T> out = newList();
+    @Override
+    public BaseRecursible sublist(Object criteria){
+        BaseRecursible<T> out = newList();
         this.clearRange();
         this.rewind();
         while(this.hasNext()){
@@ -260,11 +283,9 @@ public abstract class ItrList <T> implements IRecursible {
         }
         return out;
     }
-    public abstract boolean meetsCriteria(ListNode<T> item, Object criteria);
-    public abstract ItrList<T> newList();
 
-    public ItrList copy(){
-        ItrList out = this.newList();
+    public BaseRecursible copy(){
+        BaseRecursible out = this.newList();
         this.clearRange();
         this.rewind();
         while(this.hasNext()){
@@ -274,9 +295,22 @@ public abstract class ItrList <T> implements IRecursible {
     }
 
     @Override
+    public ListNode[] toArray() {
+        ListNode[] out = new ListNode[this.size()];
+        this.clearRange();
+        this.rewind();
+        int i = 0;
+        while(this.hasNext()){
+            out[i++] =new ListNode<>(this.next());
+        }
+        return out;
+    }
+
+    @Override
     public boolean recursible(){
         return true;
     }
+
     @Override
     public void disp(){
         System.out.println("\nDisplay ItrList:");

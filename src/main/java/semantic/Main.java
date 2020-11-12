@@ -1,6 +1,5 @@
 package semantic;
 
-import listnode.ItrList;
 import toktools.Tokenizer;
 
 public class Main {

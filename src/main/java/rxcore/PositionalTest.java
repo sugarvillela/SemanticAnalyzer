@@ -1,23 +1,29 @@
 package rxcore;
 
+import flagobj.IFlags;
+import flagobj.IRx;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class PositionalTest {
-    private final TestRunner.TestNodeMock[] testNodes;
-    private final TestRunner.RxNodeMock[] rxNodes;
+    private final IFlags[] flagNodes;
+    private final IRx[] rxNodes;
     private ArrayList<StateNode> states;
     private ArrayList<StateNode> winners;
+    private TestResult testResult;
     private int startIndex;
     private int idGenerator;    // debug id
 
-    public PositionalTest(TestRunner.TestNodeMock[] testNodes, TestRunner.RxNodeMock[] rxNodes){
-        this.testNodes = testNodes;
+    public PositionalTest(IFlags[] flagNodes, IRx[] rxNodes){
+        this.flagNodes = flagNodes;
         this.rxNodes = rxNodes;
 
         states = new ArrayList<>();
         winners = new ArrayList<>();
         idGenerator = 0;
+        testResult = null;
     }
 
     public void reset(int startIndex){
@@ -26,6 +32,7 @@ public class PositionalTest {
         winners.clear();
         states.add(new StateNode());
         System.out.println("reset: "+startIndex);
+        testResult = null;
         //idGenerator = 0;
     }
 
@@ -46,14 +53,18 @@ public class PositionalTest {
             }
         }
         while (more);
+        if(haveWinner()){
+            Collections.sort(winners);
+            testResult = new TestResult(startIndex, winners);
+        }
     }
 
     public boolean haveWinner(){
         return winners.size() > 0;
     }
 
-    public ArrayList<StateNode> getWinners(){
-        return winners;
+    public TestResult getTestResult(){
+        return testResult;
     }
 
     public void dispWinners(){
@@ -66,7 +77,7 @@ public class PositionalTest {
         return idGenerator++;
     }
 
-    private class StateNode{
+    private class StateNode implements Comparable<StateNode> {// comparable not used now
         public int[] hits;
         public boolean fail, win;
         public int iTest, iRx;
@@ -91,7 +102,7 @@ public class PositionalTest {
             System.out.println("new nondeterministic state: "+id);
         }
         private void initHits(){
-            hits = new int[testNodes.length];
+            hits = new int[flagNodes.length];
             for(int i = 0; i < hits.length; i++){
                 hits[i] = -1;
             }
@@ -121,7 +132,7 @@ public class PositionalTest {
                 win = true;
                 fail = false;
             }
-            else if(iTest >= testNodes.length){
+            else if(iTest >= flagNodes.length){
                 win = false;
                 fail = true;
             }
@@ -140,7 +151,7 @@ public class PositionalTest {
             states.add(new StateNode(this));
         }
         private boolean hitAndExceed(){
-            if(currScore >= rxNodes[iRx].hi){// exceeded
+            if(currScore >= rxNodes[iRx].getHi()){// exceeded
                 System.out.println("hitAndExceed: "+id);
                 harvestCurr();
                 incBoth();
@@ -150,7 +161,7 @@ public class PositionalTest {
             return false;
         }
         private boolean hitAndSplit(){
-            if(currScore >= rxNodes[iRx].lo){// reached minimum
+            if(currScore >= rxNodes[iRx].getLo()){// reached minimum
                 System.out.println("hitAndSplit: "+id);
                 addNonDeterministicState();
                 harvestCurr();
@@ -167,7 +178,7 @@ public class PositionalTest {
             return !fail;
         }
         private boolean missWithPrevHit(){
-            if(currScore >= rxNodes[iRx].lo){// reached minimum
+            if(currScore >= rxNodes[iRx].getLo()){// reached minimum
                 System.out.println("missWithPrevHit: "+id);
                 harvestCurr();
                 incBoth();
@@ -180,19 +191,19 @@ public class PositionalTest {
         public boolean test(){
             System.out.printf("\n%d: %s ?= %s, iTest=%d, iRx=%d\n",
                     id,
-                    testNodes[iTest].get(1).toString(),
-                    rxNodes[iRx].payload.toString(),
+                    flagNodes[iTest].getObject(1).toString(),
+                    rxNodes[iRx].getObj().toString(),
                     iTest, iRx
             );
-            if(rxNodes[iRx].test(testNodes[iTest])){
+            if(rxNodes[iRx].test(flagNodes[iTest])){
                 currScore++;
                 hits[iTest] = iRx;
                 System.out.printf("%d: YES, currScore=%d, totalScore=%d, lo=%d, hi=%d\n",
                         id,
                         currScore,
                         totalScore,
-                        rxNodes[iRx].lo,
-                        rxNodes[iRx].hi
+                        rxNodes[iRx].getLo(),
+                        rxNodes[iRx].getHi()
                 );
                 if(hitAndExceed() || hitAndSplit() || hitAndWait());
                 setWinner();
@@ -214,6 +225,71 @@ public class PositionalTest {
                     "\n\ttotalScore=" + totalScore +
                     "\n\tcurrScore=" + currScore +
                     "\n\tid=" + id +
+                    "\n}";
+        }
+
+        @Override
+        public int compareTo(StateNode other) {// made to sort backward
+            if(this.totalScore > other.totalScore){
+                return -1;
+            }
+            if(this.totalScore < other.totalScore){
+                return 1;
+            }
+            return 0;
+        }
+    }
+
+    public static class TestResult implements ITestResult{
+        private final int startIndex;
+        private int[] bestMap;
+        private int bestScore;
+
+        public TestResult(int startIndex, ArrayList<StateNode> winners){
+            this.startIndex = startIndex;
+            int bestIndex = 0, bestTotal = 0, i = 0;
+            for(StateNode winner : winners){
+                if(winner.totalScore > bestTotal){
+                    bestTotal = winner.totalScore;
+                    bestIndex = i;
+                }
+            }
+            bestMap = winners.get(bestIndex).hits;
+            bestScore = winners.get(bestIndex).totalScore;
+        }
+
+        @Override
+        public int[] getBestMap() {
+            return bestMap;
+        }
+
+        @Override
+        public int getBestScore() {
+            return bestScore;
+        }
+
+        @Override
+        public int getStartIndex() {
+            return startIndex;
+        }
+
+        @Override
+        public int compareTo(ITestResult other) {
+            if(this.bestScore > other.getBestScore()){
+                return -1;
+            }
+            if(this.bestScore < other.getBestScore()){
+                return 1;
+            }
+            return 0;
+        }
+
+        @Override
+        public String toString() {
+            return "TestResult{" +
+                    "\n\tstartIndex=" + startIndex +
+                    "\n\tbestMap=" + Arrays.toString(bestMap) +
+                    "\n\tbestScore=" + bestScore +
                     "\n}";
         }
     }

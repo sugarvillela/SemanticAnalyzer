@@ -5,7 +5,7 @@ import store.StoreTest;
 
 public class TestMain {
     public static void main(String[] args) {
-        //ItrListTest.testFlagObj();
+        //ItrListTest.testRecursiveList();
         //StoreTest.flags();
         rxcore.RxCoreTests.testPositional();
     }

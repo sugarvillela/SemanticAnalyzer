@@ -1,8 +1,6 @@
 package listnode;
 
-import flagobj.IFlags;
-
-public class ListNode<T> extends ItrList {
+public class ListNode<T> {
     public ListNode<T> prev, next;
     public final T payload;
 
@@ -10,16 +8,6 @@ public class ListNode<T> extends ItrList {
         this.payload = payload;
         prev = null;
         next = null;
-    }
-
-    @Override
-    public boolean meetsCriteria(ListNode item, Object criteria) {
-        return false;
-    }
-
-    @Override
-    public ItrList<T> newList() {
-        return new ListNode<>(payload);
     }
 
     public ListNode<T> copy(){
@@ -31,12 +19,7 @@ public class ListNode<T> extends ItrList {
         return payload.toString();
     }
 
-    @Override
-    public boolean recursible() {
-        return false;
-    }
 
-    @Override
     public void disp() {
         System.out.println(this.toString());
     }

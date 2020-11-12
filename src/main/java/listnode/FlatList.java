@@ -1,8 +1,8 @@
 package listnode;
 
 /** For payloads:
- * @param <T> Wrapped primitives and non-ItrList objects */
-public class FlatList <T> extends ItrList{
+ * @param <T> Wrapped primitives and non-recursive objects */
+public class FlatList <T> extends BaseRecursible {
     public FlatList(){
         super();
     }
@@ -19,7 +19,7 @@ public class FlatList <T> extends ItrList{
     }
 
     @Override
-    public ItrList newList() {
+    public BaseRecursible newList() {
         return new FlatList();
     }
 }

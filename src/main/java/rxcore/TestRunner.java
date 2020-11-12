@@ -1,85 +1,114 @@
 package rxcore;
 
-import toktools.Tokenizer;
+import flagobj.IFlags;
+import flagobj.IRx;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TestRunner {
-    private final TestNodeMock[] testNodes;
-    private final RxNodeMock[] rxNodes;
+    private final IFlags[] flagNodes;
+    private final IRx[] rxNodes;
     private final PositionalTest positionalTest;
+    private final ArrayList<ITestResult> testResults;
+    private ITestResult bestResult;
 
-    public TestRunner(){
-        testNodes = listNodesToArray();
-        rxNodes = rxNodesToArray();
-        positionalTest = new PositionalTest(testNodes, rxNodes);
+    public TestRunner(IFlags[] flagNodes, IRx[] rxNodes){
+        this.flagNodes = flagNodes;
+        this.rxNodes = rxNodes;
         convertHiToRemaining();
+        positionalTest = new PositionalTest(flagNodes, rxNodes);
+        testResults = new ArrayList<>();
     }
     private void convertHiToRemaining(){
         System.out.printf("convertHiToRemaining:  rxNodes.length = %d \n", rxNodes.length);
         for(int i = 0; i < rxNodes.length; i++){
-            System.out.printf("Before %d, ", rxNodes[i].hi);
-            rxNodes[i].hi = Math.min(rxNodes[i].hi, rxNodes.length - i);
-            System.out.printf("After %d \n", rxNodes[i].hi);
+            System.out.printf("Before %d, ", rxNodes[i].getHi());
+            rxNodes[i].setHi(Math.min(rxNodes[i].getHi(), rxNodes.length - i));
+            System.out.printf("After %d \n", rxNodes[i].getHi());
         }
     }
     public void test(){
-        for(int i = 0; i < testNodes.length; i++){
+        for(int i = 0; i < flagNodes.length; i++){
             positionalTest.reset(i);
             positionalTest.test();
             if(positionalTest.haveWinner()){
                 positionalTest.dispWinners();
+                testResults.add(positionalTest.getTestResult());
                 break;
             }
         }
+        setBestResult();
+    }
+    private void setBestResult(){
+        int bestIndex = 0, bestTotal = 0, i = 0;
+        for(ITestResult testResult : testResults){
+            if(testResult.getBestScore() > bestTotal){
+                bestTotal = testResult.getBestScore();
+                bestIndex = i;
+            }
+        }
+        bestResult = new RunResult(testResults.get(bestIndex));
     }
 
-    public static class TestNodeMock {
-        public Object payload;
-
-        public TestNodeMock(Object payload){
-            this.payload = payload;
-        }
-        public Object get(int integer){
-            return payload;
+    public void dispTestResults(){
+        for(ITestResult testResult : testResults){
+            System.out.println(testResult);
         }
     }
-
-    public static class RxNodeMock {
-        public Object payload;
-        public int lo, hi;
-
-        public RxNodeMock(int lo, int hi, Object payload){
-            this.lo = lo;
-            this.hi = hi;
-            this.payload = payload;
-        }
-        public boolean test(TestNodeMock testNode){
-            return this.payload.equals(testNode.get(1));
-        }
+    public ITestResult getBestResult(){
+        return bestResult;
     }
 
-    public TestNodeMock[] listNodesToArray(){
-        Tokenizer tok = new Tokenizer();
-        String[] testList;
-        testList = tok.toArr("I know I have a lovely lovely bunch of coconuts in my shoe");
-        TestNodeMock[] out = new TestNodeMock[testList.length];
-        for(int i = 0; i < testList.length; i++){
-            out[i] = new TestNodeMock(testList[i]);
+    public static class RunResult implements ITestResult{
+        private final int startIndex;
+        private final int[] bestMap;
+        private final int bestScore;
+
+        public RunResult(ITestResult result) {
+            this.startIndex = result.getStartIndex();
+            this.bestMap = result.getBestMap();
+            this.bestScore = result.getBestScore();
         }
-        return out;
-    }
-    public RxNodeMock[] rxNodesToArray(){
-        Tokenizer tok = new Tokenizer();
-        String[] rxList = tok.toArr("I have a lovely bunch of coconuts");
-        //
-        int[] rangeLo = {1, 1, 1, 1, 1, 1, 1};
-        int[] rangeHi = {1, 1, 1, 3, 1, 1, 1};
-        RxNodeMock[] out = new RxNodeMock[rxList.length];
-        for(int i = 0; i < rxList.length; i++){
-            int lo = rangeLo[i];
-            int hi = rangeHi[i];
-            int remaining = Math.min(hi, rxList.length - i);
-            out[i] = new RxNodeMock(lo, hi, rxList[i]);
+        public RunResult(int startIndex, int[] bestMap, int bestScore) {
+            this.startIndex = startIndex;
+            this.bestMap = bestMap;
+            this.bestScore = bestScore;
         }
-        return out;
+
+        @Override
+        public int[] getBestMap() {
+            return bestMap;
+        }
+
+        @Override
+        public int getBestScore() {
+            return bestScore;
+        }
+
+        @Override
+        public int getStartIndex() {
+            return startIndex;
+        }
+
+        @Override
+        public int compareTo(ITestResult other) {
+            if(this.bestScore > other.getBestScore()){
+                return -1;
+            }
+            if(this.bestScore < other.getBestScore()){
+                return 1;
+            }
+            return 0;
+        }
+
+        @Override
+        public String toString() {
+            return "RunResults{" +
+                    "\n\tstartIndex=" + startIndex +
+                    "\n\tbestMap=" + Arrays.toString(bestMap) +
+                    "\n\tbestScore=" + bestScore +
+                    "\n}";
+        }
     }
 }

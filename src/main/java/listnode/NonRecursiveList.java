@@ -1,6 +1,6 @@
 package listnode;
 
-public abstract class NonRecursiveList <T> extends ItrList{
+public abstract class NonRecursiveList <T> extends BaseRecursible {
 
     @Override
     public boolean recursible(){
@@ -11,7 +11,7 @@ public abstract class NonRecursiveList <T> extends ItrList{
     @Override
     public void pushBack (ListNode newTail){}
     @Override
-    public void pushIn( int index, ListNode node ){ }
+    public void pushIn(int index, ListNode node ){ }
     @Override
     public ListNode<T> popFront(){
         if( top >= 0 ){
@@ -41,7 +41,7 @@ public abstract class NonRecursiveList <T> extends ItrList{
     }
 
     @Override
-    public ItrList sublist(int lo, int hi){
+    public BaseRecursible sublist(int lo, int hi){
         return null;
     }
 
@@ -51,7 +51,7 @@ public abstract class NonRecursiveList <T> extends ItrList{
     }
 
     @Override
-    public ItrList newList() {
+    public BaseRecursible newList() {
         return null;
     }
 }
