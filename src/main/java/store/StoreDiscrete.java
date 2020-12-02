@@ -9,104 +9,95 @@ public class StoreDiscrete implements IStore {
     private final int rowStart, colStart;
     private int seekRow, seekCol;
 
-    public StoreDiscrete(int maxRow) {
-        store = new int[maxRow + 1];
-        //CompileInitializer compileInitializer = CompileInitializer.getInstance();
-        this.wrow = 8;//compileInitializer.getWRow();
-        this.wcol = 4;//compileInitializer.getWCol();
-        this.wval = 4;//compileInitializer.getWVal();
+    public StoreDiscrete(Store.CompositeCalculations calc) {
+        wrow = calc.wrow;
+        wcol = calc.wcol;
+        wval = calc.wval;
 
-        rowStart = Integer.SIZE - wrow;
-        colStart = Integer.SIZE - wrow - wcol;
+        rowStart = calc.rowStart;
+        colStart = calc.colStart;
 
-        rowMask = (1 << wrow) - 1;
-        colMask = (1 << wcol) - 1;
-        dataMask = (1 << colStart) - 1;
-        valMask = (1 << wval) - 1;
+        rowMask = calc.rowMask;
+        colMask = calc.colMask;
+        dataMask = calc.dataMask;
+        valMask = calc.valMask;
 
-        BIT.disp(rowMask);
-        BIT.disp(colMask);
-        BIT.disp(valMask);
-        BIT.disp(dataMask);
+        store = calc.compositeStore;
+    }
+
+    /**Reads indexing info at left side of int word and sets seek variable(s)
+     * Implented only in the 'composite' stores: StoreBoolean and StoreDiscrete
+     * @param enu a generated integer enum: see class UqDiscreteGen */
+    private void seek(int enu){
+        seekRow = (enu >> rowStart) & rowMask;
+        seekCol = (enu >> colStart) & colMask;
+//        System.out.println("discrete: seekRow=" + seekRow);
+//        System.out.println("discrete: seekCol=" + seekCol);
     }
 
     @Override
-    public void seek(int integer){
-        seekRow = (integer >> rowStart) & rowMask;
-        seekCol = (integer >> colStart) & colMask;
-//        System.out.println("seekRow=" + seekRow);
-//        System.out.println("seekCol=" + seekCol);
+    public void set(int enu){
+        seek(enu);
+        int posMask = valMask << (seekCol*wval);
+//        System.out.println("posMask=" + posMask);
+        store[seekRow] &= ~posMask;         // drop old value
+        store[seekRow] |= (posMask & enu);  // add new
     }
 
     @Override
-    public int getSeekRow(){
-        return seekRow;
-    }
+    public void set(int enu, String val) {}
 
     @Override
-    public int getSeekCol(){
-        return seekCol;
-    }
+    public void set(int enu, int val) {}
 
     @Override
-    public void set(int integer){
-        seek(integer);
+    public void drop(int enu){
+        seek(enu);
         int posMask = valMask << (seekCol*wval);
         store[seekRow] &= ~posMask;
-        store[seekRow] |= (posMask & integer);
     }
 
     @Override
-    public boolean isSet(int integer){
-        seek(integer);
+    public boolean getBoolean(int enu){
+        seek(enu);
         int posMask = valMask << (seekCol*wval);
-        return (store[seekRow] & posMask) == (integer & posMask);
+        return (store[seekRow] & posMask) == (enu & posMask);
     }
 
     @Override
-    public int getState(int integer){   // in-place value only
-        seek(integer);
-        return store[seekRow] & (valMask << (seekCol*wval));
-    }
-
-    @Override
-    public int getEnum(int integer){    // in-place value with row, col included
-        seek(integer);
-        return store[seekRow] | (integer & ~dataMask);
-    }
-
-    @Override
-    public int getNumber(int integer){// value only, right shifted to true value
-        seek(integer);
+    public int getNumber(int enu){// value only, right shifted to true value
+        seek(enu);
         int target = store[seekRow];
         int out = (target >> (seekCol*wval)) & valMask;
         return out;
     }
 
     @Override
-    public void drop(int integer){
-        seek(integer);
+    public String getString(int enu) {
+        return null;
+    }
+
+    @Override
+    public Object get(int enu) {
+        return getNumber(enu);
+    }
+
+    @Override
+    public int getState(int enu){   // in-place value only
+        seek(enu);
+        return store[seekRow] & (valMask << (seekCol*wval));
+    }
+
+    @Override
+    public int numNonZero(int enu) {
+        return anyNonZero(enu)? 1 : 0;
+    }
+
+    @Override
+    public boolean anyNonZero(int enu) {
+        seek(enu);
         int posMask = valMask << (seekCol*wval);
-        store[seekRow] &= ~posMask;
-    }
-
-    @Override
-    public int numNonZero(int integer) {
-        seek(integer);
-        int data = store[seekRow], len = colStart/wval, count = 0;
-        for(int i =  0; i < len; i++){
-            if((data & valMask) > 0){
-                count++;
-            }
-            data >>= wval;
-        }
-        return count;
-    }
-
-    @Override
-    public boolean anyNonZero(int integer) {
-        seek(integer);
-        return (store[seekRow] & dataMask) > 0;
+        return (store[seekRow] & posMask) > 0;
     }
 
     @Override

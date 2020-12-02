@@ -1,5 +1,5 @@
 // Generated file, do not edit
-// Last write: 11/12/2020 10:33:55
+// Last write: 11/18/2020 16:36:34
 package generated.lists;
 
 import generated.code.DATATYPE;
@@ -28,7 +28,26 @@ public class FlagStats {
         ) {
             return LIST_BOOLEAN;
         }
-        return null;
+        throw new IllegalStateException("Dev err: unknown datatype");
+    }
+    // Pass base index (category name) to get type:
+    public static DATATYPE flagTypeByBaseIndex (int index) {
+        switch (index) {
+            case 0x00:
+            case 0x07:
+                return LIST_STRING;
+            case 0x0F:
+                return LIST_NUMBER;
+            case 0x010000000:
+            case 0x011000000:
+                return LIST_DISCRETE;
+            case 0x020000000:
+            case 0x030000000:
+            case 0x040000000:
+                return LIST_BOOLEAN;
+            default:
+                throw new IllegalStateException("Dev err: unknown datatype");
+        }
     }
     // Store Settings:
     public static int getWRow () {
@@ -41,40 +60,46 @@ public class FlagStats {
         return 4;
     }
     // Stats by type:
-    public static int getSizeListString () {
-        return 13;
+    public static int getSize (DATATYPE datatype) {
+        switch (datatype) {
+            case LIST_STRING:
+                return 0x0F;
+            case LIST_NUMBER:
+                return 0x05;
+            case LIST_DISCRETE:
+                return 0x017;
+            case LIST_BOOLEAN:
+                return 0x014;
+            default:
+                throw new IllegalStateException("Dev err: unknown datatype");
+        }
     }
-    public static int getLowIndexListString () {
-        return 1;
+    public static int getLowIndex (DATATYPE datatype) {
+        switch (datatype) {
+            case LIST_STRING:
+                return 0x01;
+            case LIST_NUMBER:
+                return 0x010;
+            case LIST_DISCRETE:
+                return 0x010000001;
+            case LIST_BOOLEAN:
+                return 0x020000001;
+            default:
+                throw new IllegalStateException("Dev err: unknown datatype");
+        }
     }
-    public static int getHighIndexListString () {
-        return 14;
-    }
-    public static int getSizeListNumber () {
-        return 4;
-    }
-    public static int getLowIndexListNumber () {
-        return 16;
-    }
-    public static int getHighIndexListNumber () {
-        return 19;
-    }
-    public static int getSizeListDiscrete () {
-        return 21;
-    }
-    public static int getLowIndexListDiscrete () {
-        return 268435457;
-    }
-    public static int getHighIndexListDiscrete () {
-        return 285212832;
-    }
-    public static int getSizeListBoolean () {
-        return 17;
-    }
-    public static int getLowIndexListBoolean () {
-        return 536870913;
-    }
-    public static int getHighIndexListBoolean () {
-        return 1073741952;
+    public static int getHighIndex (DATATYPE datatype) {
+        switch (datatype) {
+            case LIST_STRING:
+                return 0x0E;
+            case LIST_NUMBER:
+                return 0x013;
+            case LIST_DISCRETE:
+                return 0x0110000A0;
+            case LIST_BOOLEAN:
+                return 0x040000080;
+            default:
+                throw new IllegalStateException("Dev err: unknown datatype");
+        }
     }
 }

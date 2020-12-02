@@ -1,5 +1,5 @@
 // Generated file, do not edit
-// Last write: 11/12/2020 10:33:55
+// Last write: 11/18/2020 16:36:34
 package generated.lists;
 
 public class ListString {
@@ -33,7 +33,7 @@ public class ListString {
         ) {
             return "TEXT";
         }
-        return null;
+        throw new IllegalStateException("Dev err: unknown datatype");
     }
     public static String categoryByBaseIndex (int index) {
         switch (index) {
@@ -42,7 +42,7 @@ public class ListString {
             case 0x07:
                 return "TEXT";
             default:
-                return null;
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
     public static int baseIndexByRange (int index) {
@@ -56,7 +56,7 @@ public class ListString {
         ) {
             return 0x07;
         }
-        return -1;
+        throw new IllegalStateException("Dev err: unknown datatype");
     }
     public static int offset () {
         return 0x00;

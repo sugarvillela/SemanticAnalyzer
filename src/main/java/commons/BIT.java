@@ -16,6 +16,12 @@ public class BIT {
     public static String str( int n, int w ){
         return BIT.str( n, BIT.binaryFormatString(w) );
     }
+    public static String str( long n ){
+        String right = str((int)n);
+        String left = str((int)(n >> 32));
+
+        return left + "_|_" + right;
+    }
     /**
      * Get number as binary string; underscore spacers for readability
      *
@@ -38,6 +44,7 @@ public class BIT {
         }
         return String.valueOf(fstring);
     }
+
     public static void disp( int n ){
         System.out.printf( "%s \t %08X \n", BIT.str( n, "0000_0000_0000_0000_0000_0000_0000_0000" ), n );
     }

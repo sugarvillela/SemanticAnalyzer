@@ -1,5 +1,5 @@
 // Generated file, do not edit
-// Last write: 11/12/2020 10:33:55
+// Last write: 11/18/2020 16:36:34
 package generated.lists;
 
 public class ListBoolean {
@@ -45,7 +45,7 @@ public class ListBoolean {
         ) {
             return "POS";
         }
-        return null;
+        throw new IllegalStateException("Dev err: unknown datatype");
     }
     public static String categoryByBaseIndex (int index) {
         switch (index) {
@@ -56,7 +56,7 @@ public class ListBoolean {
             case 0x040000000:
                 return "POS";
             default:
-                return null;
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
     public static int baseIndexByRange (int index) {
@@ -75,7 +75,7 @@ public class ListBoolean {
         ) {
             return 0x040000000;
         }
-        return -1;
+        throw new IllegalStateException("Dev err: unknown datatype");
     }
     public static int offset () {
         return 0x02;

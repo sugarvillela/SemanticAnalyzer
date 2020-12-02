@@ -3,6 +3,23 @@ package commons;
 import java.util.ArrayList;
 
 public class Commons {
+    public static String[] deleteEmpties(String[] tok){
+        int size = 0;
+        for(String t : tok){
+            if(t != null && !t.isEmpty()){
+                size ++;
+            }
+        }
+        String[] out = new String[size];
+        int i = 0;
+        for(String t : tok){
+            if(t != null && !t.isEmpty()){
+                out[i++] = t;
+            }
+        }
+        return out;
+    }
+
     public static <T> void disp( ArrayList<T> arr ){
         disp(arr, "generic array list");
     }

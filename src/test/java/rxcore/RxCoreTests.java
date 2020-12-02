@@ -63,7 +63,7 @@ public class RxCoreTests {
         }
     }
 
-    public static IFlags[] listNodesToArray(){
+    private static IFlags[] listNodesToArray(){
         Tokenizer tok = new Tokenizer();
         String[] testList;
         testList = tok.toArr("I know I have a lovely lovely bunch of coconuts in my shoe");
@@ -74,7 +74,7 @@ public class RxCoreTests {
         return out;
     }
 
-    public static IRx[] rxNodesToArray(){
+    private static IRx[] rxNodesToArray(){
         Tokenizer tok = new Tokenizer();
         String[] rxList = tok.toArr("I have a lovely bunch of coconuts");
         //
@@ -89,7 +89,8 @@ public class RxCoreTests {
         }
         return out;
     }
-    public static void testPositional(){
+
+    public static void mainTest(){
         TestRunner testRunner = new TestRunner(listNodesToArray(), rxNodesToArray());
         testRunner.test();
         testRunner.dispTestResults();
