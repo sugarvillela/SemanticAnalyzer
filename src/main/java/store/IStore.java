@@ -56,4 +56,17 @@ public interface IStore {
     boolean anyNonZero(int enu);
 
     void disp();
+
+    ItrStore getItr();
+
+    ItrStore getItr(int startEnu, int stopEnu);
+
+    public interface ItrStore {
+        void rewind(int startEnu, int stopEnu);
+        int nextKey();
+        boolean hasNext();
+        boolean nextBoolean();
+        int nextNumber();
+        String nextString();
+    }
 }

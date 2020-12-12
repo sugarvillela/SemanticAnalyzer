@@ -1,42 +1,68 @@
-package rxcore;
+package rxcore.util;
 
-import flagobj.IFlags;
-import flagobj.IRx;
+import generated.patterns.PatternDefinition;
+import generated.patterns.PatternSourceLang;
+import generated.rxwords.RxWord;
+import recursivelist.IRecursiveNode;
+import rxcore.ResultSet;
+import rxcore.ResultSetSourceLang;
+import rxcore.RxEngine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class PositionalTest {
-    private final IFlags[] flagNodes;
-    private final IRx[] rxNodes;
-    private ArrayList<StateNode> states;
-    private ArrayList<StateNode> winners;
-    private TestResult testResult;
+import static generated.lists.ListString.IN;
+
+public class SourceLangTestUtil implements RxEngine {
+    private IRecursiveNode[] flagNodes;
+    private PatternSourceLang patternDefinition;
+    private RxWord[] rxWords;
+    private final ArrayList<StateNode> states;
+    private final ArrayList<StateNode> winners;
+    private ResultSet testResult;
     private int startIndex;
     private int idGenerator;    // debug id
 
-    public PositionalTest(IFlags[] flagNodes, IRx[] rxNodes){
-        this.flagNodes = flagNodes;
-        this.rxNodes = rxNodes;
-
+    public SourceLangTestUtil(){
+        //this.rxWords = rxWords;
         states = new ArrayList<>();
         winners = new ArrayList<>();
         idGenerator = 0;
         testResult = null;
     }
 
-    public void reset(int startIndex){
-        this.startIndex = startIndex;
+    @Override
+    public RxEngine setNodes(IRecursiveNode[] flagNodes) {
+        this.flagNodes = flagNodes;
+        return this;
+    }
+
+    @Override
+    public RxEngine reset(int newIndex) {
+        this.startIndex = newIndex;
         states.clear();
         winners.clear();
         states.add(new StateNode());
-        System.out.println("reset: "+startIndex);
+        System.out.println("reset: "+ newIndex);
         testResult = null;
-        //idGenerator = 0;
+        return this;
     }
 
-    public void test(){
+    @Override
+    public RxEngine setPattern(PatternDefinition patternDefinition) {
+        if(
+                !(patternDefinition instanceof PatternSourceLang)
+        ){
+            throw new IllegalStateException("Dev err: blind cast will fail: " + patternDefinition.getClass().getSimpleName());
+        }
+        this.patternDefinition = (PatternSourceLang)patternDefinition;
+        this.rxWords = (RxWord[])patternDefinition.getPattern();
+        return this;
+    }
+
+    @Override
+    public boolean test(){
         boolean more;
         do{
             more = false;
@@ -53,24 +79,47 @@ public class PositionalTest {
             }
         }
         while (more);
-        if(haveWinner()){
+        if(haveResult()){
             Collections.sort(winners);
-            testResult = new TestResult(startIndex, winners);
+            setBestResult();
+            return true;
         }
+        return false;
     }
 
-    public boolean haveWinner(){
-        return winners.size() > 0;
+    @Override
+    public boolean haveResult() {
+        return !winners.isEmpty();
     }
 
-    public TestResult getTestResult(){
+    @Override
+    public ResultSet getResult() {
         return testResult;
     }
 
-    public void dispWinners(){
+    @Override
+    public ArrayList<ResultSet> getResults() {
+        return null;
+    }
+
+    @Override
+    public void disp() {
         for(StateNode state : winners){
             System.out.println(state);
         }
+    }
+
+    private void setBestResult(){
+        int bestIndex = 0, bestTotal = 0, i = 0;
+        for(StateNode winner : winners){
+            if(winner.totalScore > bestTotal){
+                bestTotal = winner.totalScore;
+                bestIndex = i;
+            }
+        }
+        int[] bestMap = winners.get(bestIndex).hits;
+        int bestScore = winners.get(bestIndex).totalScore;
+        testResult = new ResultSetSourceLang(startIndex, bestMap, bestScore);
     }
 
     private int idGen(){
@@ -128,7 +177,7 @@ public class PositionalTest {
             iRx++;
         }
         private void setWinFail(){
-            if(iRx >= rxNodes.length){
+            if(iRx >= rxWords.length){
                 win = true;
                 fail = false;
             }
@@ -151,7 +200,7 @@ public class PositionalTest {
             states.add(new StateNode(this));
         }
         private boolean hitAndExceed(){
-            if(currScore >= rxNodes[iRx].getHi()){// exceeded
+            if(currScore >= rxWords[iRx].getHi()){// exceeded
                 System.out.println("hitAndExceed: "+id);
                 harvestCurr();
                 incBoth();
@@ -161,7 +210,7 @@ public class PositionalTest {
             return false;
         }
         private boolean hitAndSplit(){
-            if(currScore >= rxNodes[iRx].getLo()){// reached minimum
+            if(currScore >= rxWords[iRx].getLo()){// reached minimum
                 System.out.println("hitAndSplit: "+id);
                 addNonDeterministicState();
                 harvestCurr();
@@ -178,7 +227,7 @@ public class PositionalTest {
             return !fail;
         }
         private boolean missWithPrevHit(){
-            if(currScore >= rxNodes[iRx].getLo()){// reached minimum
+            if(currScore >= rxWords[iRx].getLo()){// reached minimum
                 System.out.println("missWithPrevHit: "+id);
                 harvestCurr();
                 incBoth();
@@ -191,19 +240,19 @@ public class PositionalTest {
         public boolean test(){
             System.out.printf("\n%d: %s ?= %s, iTest=%d, iRx=%d\n",
                     id,
-                    flagNodes[iTest].getObject(1).toString(),
-                    rxNodes[iRx].getObj().toString(),
+                    flagNodes[iTest].getString(IN),
+                    rxWords[iRx].getPattern().toString(),
                     iTest, iRx
             );
-            if(rxNodes[iRx].test(flagNodes[iTest])){
+            if(rxWords[iRx].test(flagNodes[iTest])){
                 currScore++;
                 hits[iTest] = iRx;
                 System.out.printf("%d: YES, currScore=%d, totalScore=%d, lo=%d, hi=%d\n",
                         id,
                         currScore,
                         totalScore,
-                        rxNodes[iRx].getLo(),
-                        rxNodes[iRx].getHi()
+                        rxWords[iRx].getLo(),
+                        rxWords[iRx].getHi()
                 );
                 if(hitAndExceed() || hitAndSplit() || hitAndWait());
                 setWinner();
@@ -237,60 +286,6 @@ public class PositionalTest {
                 return 1;
             }
             return 0;
-        }
-    }
-
-    public static class TestResult implements ITestResult{
-        private final int startIndex;
-        private int[] bestMap;
-        private int bestScore;
-
-        public TestResult(int startIndex, ArrayList<StateNode> winners){
-            this.startIndex = startIndex;
-            int bestIndex = 0, bestTotal = 0, i = 0;
-            for(StateNode winner : winners){
-                if(winner.totalScore > bestTotal){
-                    bestTotal = winner.totalScore;
-                    bestIndex = i;
-                }
-            }
-            bestMap = winners.get(bestIndex).hits;
-            bestScore = winners.get(bestIndex).totalScore;
-        }
-
-        @Override
-        public int[] getBestMap() {
-            return bestMap;
-        }
-
-        @Override
-        public int getBestScore() {
-            return bestScore;
-        }
-
-        @Override
-        public int getStartIndex() {
-            return startIndex;
-        }
-
-        @Override
-        public int compareTo(ITestResult other) {
-            if(this.bestScore > other.getBestScore()){
-                return -1;
-            }
-            if(this.bestScore < other.getBestScore()){
-                return 1;
-            }
-            return 0;
-        }
-
-        @Override
-        public String toString() {
-            return "TestResult{" +
-                    "\n\tstartIndex=" + startIndex +
-                    "\n\tbestMap=" + Arrays.toString(bestMap) +
-                    "\n\tbestScore=" + bestScore +
-                    "\n}";
         }
     }
 }

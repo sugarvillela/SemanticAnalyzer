@@ -1,6 +1,5 @@
 package store;
 
-import commons.Commons;
 import generated.lists.FlagStats;
 import generated.lists.ListString;
 
@@ -11,6 +10,7 @@ import static generated.code.DATATYPE.LIST_STRING;
 public class StoreString implements IStore {
     private final String[] store;
     private final int offset, size;
+    private ItrStore itrInstance;
 
     public StoreString() {
         size = FlagStats.getSize(LIST_STRING);
@@ -94,11 +94,72 @@ public class StoreString implements IStore {
     }
 
     @Override
+    public ItrStore getItr() {
+        return null;
+    }
+
+    @Override
+    public ItrStore getItr(int startEnu, int stopEnu) {
+        if(itrInstance == null){
+            return (itrInstance = new ItrString(store, offset, startEnu, stopEnu));
+        }
+        else{
+            itrInstance.rewind(startEnu, stopEnu);
+            return itrInstance;
+        }
+    }
+
+    @Override
     public String toString() {
         return "StoreString{" +
                 "\n\tstore=" + Arrays.toString(store) +
                 "\n\toffset=" + offset +
                 "\n\tsize=" + size +
                 "\n}";
+    }
+
+    public static class ItrString implements ItrStore {
+        private final String[] store;
+        private final int offset;
+        protected int rowCurr, rowStop;
+
+        public ItrString(String[] store, int offset, int startEnu, int stopEnu) {
+            this.store = store;
+            this.offset = offset;
+            this.rewind(startEnu, stopEnu);
+        }
+
+        @Override
+        public void rewind(int startEnu, int stopEnu) {
+            rowCurr = startEnu;
+            rowStop = stopEnu;
+        }
+
+        @Override
+        public int nextKey() {
+            return rowCurr;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return rowCurr <= rowStop;// && (rowCurr - offset) < store.length; needs to break on bad programming
+        }
+
+        @Override
+        public boolean nextBoolean() {
+            return nextString() != null;
+        }
+
+        @Override
+        public int nextNumber() {
+            throw new IllegalStateException("Dev err");
+        }
+
+        @Override
+        public String nextString() {
+            String value = store[rowCurr - offset];
+            rowCurr++;
+            return value;
+        }
     }
 }

@@ -1,16 +1,14 @@
 package semantic;
 
-import search.DbSearchTest;
-
 public class TestMain {
     public static void main(String[] args) {
         System.out.println("Hello");
+        //FlagNodeTest.testSublist();
         //ItrListTest.testRecursiveList();
-        //StoreTest.anyNonZeroDiscrete();
-        //StoreTest.store();
-        //rxcore.RxCoreTests.mainTest();
+        //StoreTest.testVote();
+        rxcore.RxCoreTests.testSourceLang();
 //        HashFactoryTest.hashes();
 //        BloomTest.testBloomCalc();
-        DbSearchTest.getColNames();
+//        DbSearchTest.getColNames();
     }
 }

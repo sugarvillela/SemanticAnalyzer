@@ -1,11 +1,15 @@
 package store;
 
-import commons.BIT;
+import commons.Commons;
+import generated.code.DATATYPE;
+import generated.lists.FlagStats;
+import store.util.VoteUtil;
 
 import static generated.lists.ListString.*;
 import static generated.lists.ListNumber.*;
 import static generated.lists.ListDiscrete.*;
 import static generated.lists.ListBoolean.*;
+import static generated.lists.ListVote.*;
 
 public class StoreTest {
     public static void discrete(){
@@ -80,124 +84,213 @@ public class StoreTest {
     }
     public static void store(){
         Store store = new Store();
-        store.set(DAVE, "01");
-        store.set(IRVING, "02");
-        store.set(IN, "08");
-        store.set(SURNAME, "15");
-        store.set(INDEX, 2);
+        store.set(ORIG, "01");
+        store.set(IN, "02");
+        store.set(ROOT, "08");
+        store.set(EXPAND1, "15");
+        store.set(VALUE, 2);
 
-        store.set(INFINITIVE);//discrete
-        store.set(TEN);//discrete
-        store.set(MORE);//boolean state
-        store.set(MODAL);//boolean pos
+        store.set(CHINESE);//discrete
+        store.set(JAPANESE);//discrete
+        store.set(CAP_FIRST);//boolean WORD_CONTAINS
+        store.set(CAP_ALL);//boolean WORD_CONTAINS
         store.disp();
 
-        System.out.println("getBoolean(DAVE): " + store.getBoolean(DAVE));
-        System.out.println("getBoolean(IRVING): " + store.getBoolean(IRVING));
-        System.out.println("getBoolean(LUPE): " + store.getBoolean(LUPE));
+        System.out.println("getBoolean(ORIG): " + store.getBoolean(ORIG));
+        System.out.println("getString(ORIG): " + store.getString(ORIG));
+        System.out.println("getString(IN): " + store.getString(IN));
+        System.out.println("getString(EXPAND1): " + store.getString(EXPAND1));
+        System.out.println("getNumber(VALUE): " + store.getNumber(VALUE));
+        System.out.println("getString(VALUE): " + store.getString(VALUE));
+        System.out.println("getBoolean(CHIbNESE): " + store.getBoolean(CHINESE));
+        System.out.println("getBoolean(JAPANESE): " + store.getBoolean(JAPANESE));
+        System.out.println("getBoolean(GERMAN): " + store.getBoolean(GERMAN));
         System.out.println("drop: IRVING");
-        store.drop(IRVING);
-        System.out.println("getBoolean(IRVING): " + store.getBoolean(IRVING));
+        store.drop(JAPANESE);
+        System.out.println("getBoolean(JAPANESE): " + store.getBoolean(JAPANESE));
         System.out.println();
 
-        System.out.println("getBoolean(INDEX): " + store.getBoolean(INDEX));
-        System.out.println("getBoolean(GROUP): " + store.getBoolean(GROUP));
-        System.out.println("drop: INDEX");
-        store.drop(INDEX);
-        System.out.println("getBoolean(INDEX): " + store.getBoolean(INDEX));
-        System.out.println();
+    }
+    public static void testVote(){
+        Store store = new Store();
+        store.set(ADJ);
+        store.set(ADJ);
+        store.set(ADJ);
+        store.set(ADJ);
+        store.set(DETERMINER);
+        store.set(DETERMINER);
+        store.set(PREP);
+        store.set(PREP);
+        store.set(PREP);
+        store.set(PREP);
+        System.out.println(store.getNumber(ADJ));
+        System.out.println(store.getNumber(DETERMINER));
+        System.out.println(store.getNumber(PREP));
 
-        System.out.println("getBoolean(INFINITIVE): " + store.getBoolean(INFINITIVE));
-        System.out.println("getBoolean(TEN): " + store.getBoolean(TEN));
-        System.out.println("getBoolean(NINE): " + store.getBoolean(NINE));
-        System.out.println("drop: INFINITIVE");
-        store.drop(INFINITIVE);
-        System.out.println("getBoolean(INFINITIVE): " + store.getBoolean(INFINITIVE));
-        System.out.println();
+        VoteUtil voteUtil = store.getVoteUtil();
+        voteUtil.tallyVotes(ADJ, VERB);
+        if(voteUtil.isTie()){
+            Commons.disp(voteUtil.getTies(), "ties");
+        }
+        else{
+            System.out.printf("bestEnu = 0x%X, bestScore = %d", voteUtil.getBestEnu(), voteUtil.getBestScore());
+        }
+    }
+    public static void testItrDiscrete(){
+        Store store = new Store();
+        store.set(ADJ);
+        //store.set(ADV);
+        store.set(CONJUNCTION);
+        //store.set(DETERMINER);
+        store.set(IRREG);
+        //store.set(MODAL);
+        store.set(NAME);
+        //store.set(NOUN);
+        store.set(PREP);
+        //store.set(PREP_ADV);
+        store.set(PRONOUN);
+        //store.set(VERB);
+        int startEnu = 0x05301000;  // ADJ
+        int stopEnu = 0x07410000;   // VERB
+        IStore.ItrStore itr = store.getStore(DATATYPE.LIST_VOTE).getItr(startEnu, stopEnu);
+        int i = 20;
+        while(itr.hasNext() && 0 < i--){
+            int valCurr = itr.nextNumber();
+            System.out.printf("output: valCurr=%d \n", valCurr);
+        }
+        //voteUtil.tallyVotes(start, stop);
+    }
+    public static void testItrBoolean(){
+        Store store = new Store();
+//        store.set(ARTICLE);
+//        store.set(CONJ_ADV);
+        store.set(COORDINATING);
+        //store.set(CORRELATING);
+        store.set(DEFINITE);
+        //store.set(DEMONSTRATIVE);
+        store.set(DISTRIBUTIVE);
+        //store.set(INDEFINITE);
+        store.set(LINKING);
+        //store.set(PERSONAL);
+        store.set(POSSESSIVE);
+        //store.set(QUANTITIVE);
+        store.set(RECIPROCAL);
+//        store.set(REFLEXIVE);
+//        store.set(SUBORDINATING);
 
-        System.out.println("getBoolean(MORE): " + store.getBoolean(MORE));
-        System.out.println("getBoolean(DONE): " + store.getBoolean(DONE));
-        System.out.println("drop: MORE");
-        store.drop(MORE);
-        System.out.println("getBoolean(MORE): " + store.getBoolean(MORE));
-        System.out.println();
+        int startEnu = 0x015000004; //COORDINATING
+        int stopEnu = 0x015001000; //RECIPROCAL
+        IStore.ItrStore itr = store.getStore(DATATYPE.LIST_BOOLEAN).getItr(startEnu, stopEnu);
+        int i = 20;
+        while(itr.hasNext() && 0 < i--){
+            int valCurr = itr.nextNumber();
+            System.out.printf("output: valCurr=%d \n", valCurr);
+        }
+    }
+    public static void testItrStrInt(){
+        Store store = new Store();
+        store.set(IN, "karaoke hero");
+        store.set(ORIG, "original text");
+        store.set(EXPAND1, "expando uno");
 
+        int startEnu = 0x01; //
+        int stopEnu = 0x03; //
+        IStore.ItrStore itrString = store.getStore(DATATYPE.LIST_STRING).getItr(startEnu, stopEnu);
+        int i = 20;
+        while(itrString.hasNext() && 0 < i--){
+            int key = itrString.nextKey();
+            String valCurr = itrString.nextString();
+            System.out.printf("%d: valCurr=%s \n", key, valCurr);
+        }
+
+        store.set(VALUE, 69);
+        store.set(EE, 6);
+
+        startEnu = VALUE; //
+        stopEnu = EE; //
+        IStore.ItrStore itrNumber = store.getStore(VALUE).getItr(startEnu, stopEnu);
+        i = 20;
+        while(itrNumber.hasNext() && 0 < i--){
+            int key = itrNumber.nextKey();
+            int valCurr = itrNumber.nextNumber();
+            System.out.printf("%d: valCurr=%d \n", key, valCurr);
+        }
     }
     public static void anyNonZeroDiscrete(){
-        Store store = new Store();
-        System.out.println("byBaseIndex: anyNonZero(VERB_FORMS): " + store.anyNonZero(VERB_FORMS));
-        System.out.println("byBaseIndex: anyNonZero(NUMBERS): " + store.anyNonZero(NUMBERS));
-        System.out.println("set: INFINITIVE");
-        store.set(INFINITIVE);//discrete
-        System.out.println("byBaseIndex:  anyNonZero(VERB_FORMS): " + store.anyNonZero(VERB_FORMS));
-        System.out.println("byBaseIndex:  anyNonZero(NUMBERS): " + store.anyNonZero(NUMBERS));
-
-        System.out.println("byRange: anyNonZero(PRESENT): " + store.anyNonZero(PRESENT));
-        System.out.println("byRange: anyNonZero(ONE): " + store.anyNonZero(ONE));
-        System.out.println("set: TEN");
-        store.set(TEN);//discrete
-        System.out.println("byRange:  anyNonZero(VERB_FORMS): " + store.anyNonZero(PRESENT));
-        System.out.println("byRange:  anyNonZero(NUMBERS): " + store.anyNonZero(ONE));
+//        Store store = new Store();
+//        System.out.println("byBaseIndex: anyNonZero(VERB_FORMS): " + store.anyNonZero(VERB_FORMS));
+//        System.out.println("byBaseIndex: anyNonZero(NUMBERS): " + store.anyNonZero(NUMBERS));
+//        System.out.println("set: INFINITIVE");
+//        store.set(INFINITIVE);//discrete
+//        System.out.println("byBaseIndex:  anyNonZero(VERB_FORMS): " + store.anyNonZero(VERB_FORMS));
+//        System.out.println("byBaseIndex:  anyNonZero(NUMBERS): " + store.anyNonZero(NUMBERS));
+//
+//        System.out.println("byRange: anyNonZero(PRESENT): " + store.anyNonZero(PRESENT));
+//        System.out.println("byRange: anyNonZero(ONE): " + store.anyNonZero(ONE));
+//        System.out.println("set: TEN");
+//        store.set(TEN);//discrete
+//        System.out.println("byRange:  anyNonZero(VERB_FORMS): " + store.anyNonZero(PRESENT));
+//        System.out.println("byRange:  anyNonZero(NUMBERS): " + store.anyNonZero(ONE));
     }
     public static void anyNonZeroBoolean(){
-        Store store = new Store();
-        System.out.println("byBaseIndex: anyNonZero(COLORS): " + store.anyNonZero(COLORS));
-        System.out.println("byBaseIndex: anyNonZero(POS): " + store.anyNonZero(POS));
-        System.out.println("set: GREEN");
-        store.set(GREEN);
-        System.out.println("byBaseIndex:  anyNonZero(COLORS): " + store.anyNonZero(COLORS));
-        System.out.println("byBaseIndex:  anyNonZero(POS): " + store.anyNonZero(POS));
-
-        System.out.println("byRange: anyNonZero(FUSCIA): " + store.anyNonZero(FUSCIA));
-        System.out.println("byRange: anyNonZero(VERB): " + store.anyNonZero(VERB));
-        System.out.println("set: NOUN");
-        store.set(NOUN);
-        System.out.println("byRange:  anyNonZero(FUSCIA): " + store.anyNonZero(FUSCIA));
-        System.out.println("byRange:  anyNonZero(VERB): " + store.anyNonZero(VERB));
-
-        System.out.println("drop: NOUN");
-        store.drop(NOUN);
-        System.out.println("byRange:  anyNonZero(FUSCIA): " + store.anyNonZero(FUSCIA));
-        System.out.println("byRange:  anyNonZero(VERB): " + store.anyNonZero(VERB));
+//        Store store = new Store();
+//        System.out.println("byBaseIndex: anyNonZero(COLORS): " + store.anyNonZero(COLORS));
+//        System.out.println("byBaseIndex: anyNonZero(POS): " + store.anyNonZero(POS));
+//        System.out.println("set: GREEN");
+//        store.set(GREEN);
+//        System.out.println("byBaseIndex:  anyNonZero(COLORS): " + store.anyNonZero(COLORS));
+//        System.out.println("byBaseIndex:  anyNonZero(POS): " + store.anyNonZero(POS));
+//
+//        System.out.println("byRange: anyNonZero(FUSCIA): " + store.anyNonZero(FUSCIA));
+//        System.out.println("byRange: anyNonZero(VERB): " + store.anyNonZero(VERB));
+//        System.out.println("set: NOUN");
+//        store.set(NOUN);
+//        System.out.println("byRange:  anyNonZero(FUSCIA): " + store.anyNonZero(FUSCIA));
+//        System.out.println("byRange:  anyNonZero(VERB): " + store.anyNonZero(VERB));
+//
+//        System.out.println("drop: NOUN");
+//        store.drop(NOUN);
+//        System.out.println("byRange:  anyNonZero(FUSCIA): " + store.anyNonZero(FUSCIA));
+//        System.out.println("byRange:  anyNonZero(VERB): " + store.anyNonZero(VERB));
     }
     public static void numNonZeroDiscrete(){
-        Store store = new Store();
-        System.out.println("byBaseIndex: numNonZero(VERB_FORMS): " + store.numNonZero(VERB_FORMS));
-        System.out.println("byBaseIndex: numNonZero(NUMBERS): " + store.numNonZero(NUMBERS));
-        System.out.println("set: INFINITIVE");
-        store.set(INFINITIVE);
-        System.out.println("byBaseIndex: numNonZero(VERB_FORMS): " + store.numNonZero(VERB_FORMS));
-        System.out.println("byBaseIndex: numNonZero(NUMBERS): " + store.numNonZero(NUMBERS));
-
-        System.out.println("set: PAST");
-        store.set(PAST);
-        System.out.println("byBaseIndex: numNonZero(VERB_FORMS): " + store.numNonZero(VERB_FORMS));
-        System.out.println("byBaseIndex: numNonZero(NUMBERS): " + store.numNonZero(NUMBERS));
-
-        System.out.println("drop: PAST");
-        store.drop(PAST);
-        System.out.println("byBaseIndex: numNonZero(VERB_FORMS): " + store.numNonZero(VERB_FORMS));
-        System.out.println("byBaseIndex: numNonZero(NUMBERS): " + store.numNonZero(NUMBERS));
+//        Store store = new Store();
+//        System.out.println("byBaseIndex: numNonZero(VERB_FORMS): " + store.numNonZero(VERB_FORMS));
+//        System.out.println("byBaseIndex: numNonZero(NUMBERS): " + store.numNonZero(NUMBERS));
+//        System.out.println("set: INFINITIVE");
+//        store.set(INFINITIVE);
+//        System.out.println("byBaseIndex: numNonZero(VERB_FORMS): " + store.numNonZero(VERB_FORMS));
+//        System.out.println("byBaseIndex: numNonZero(NUMBERS): " + store.numNonZero(NUMBERS));
+//
+//        System.out.println("set: PAST");
+//        store.set(PAST);
+//        System.out.println("byBaseIndex: numNonZero(VERB_FORMS): " + store.numNonZero(VERB_FORMS));
+//        System.out.println("byBaseIndex: numNonZero(NUMBERS): " + store.numNonZero(NUMBERS));
+//
+//        System.out.println("drop: PAST");
+//        store.drop(PAST);
+//        System.out.println("byBaseIndex: numNonZero(VERB_FORMS): " + store.numNonZero(VERB_FORMS));
+//        System.out.println("byBaseIndex: numNonZero(NUMBERS): " + store.numNonZero(NUMBERS));
     }
     public static void numNonZeroBoolean(){
-        Store store = new Store();
-        System.out.println("byBaseIndex: numNonZero(COLORS): " + store.numNonZero(COLORS));
-        System.out.println("byBaseIndex: numNonZero(POS): " + store.numNonZero(POS));
-        System.out.println("set: GREEN");
-        store.set(GREEN);
-        System.out.println("byBaseIndex: numNonZero(COLORS): " + store.numNonZero(COLORS));
-        System.out.println("byBaseIndex: numNonZero(POS): " + store.numNonZero(POS));
-
-        System.out.println("set: FUSCIA");
-        store.set(FUSCIA);
-        System.out.println("set: RED");
-        store.set(RED);
-        System.out.println("byBaseIndex: numNonZero(COLORS): " + store.numNonZero(COLORS));
-        System.out.println("byBaseIndex: numNonZero(POS): " + store.numNonZero(POS));
-
-        System.out.println("drop: RED");
-        store.drop(RED);
-        System.out.println("byBaseIndex: numNonZero(COLORS): " + store.numNonZero(COLORS));
-        System.out.println("byBaseIndex: numNonZero(POS): " + store.numNonZero(POS));
+//        Store store = new Store();
+//        System.out.println("byBaseIndex: numNonZero(COLORS): " + store.numNonZero(COLORS));
+//        System.out.println("byBaseIndex: numNonZero(POS): " + store.numNonZero(POS));
+//        System.out.println("set: GREEN");
+//        store.set(GREEN);
+//        System.out.println("byBaseIndex: numNonZero(COLORS): " + store.numNonZero(COLORS));
+//        System.out.println("byBaseIndex: numNonZero(POS): " + store.numNonZero(POS));
+//
+//        System.out.println("set: FUSCIA");
+//        store.set(FUSCIA);
+//        System.out.println("set: RED");
+//        store.set(RED);
+//        System.out.println("byBaseIndex: numNonZero(COLORS): " + store.numNonZero(COLORS));
+//        System.out.println("byBaseIndex: numNonZero(POS): " + store.numNonZero(POS));
+//
+//        System.out.println("drop: RED");
+//        store.drop(RED);
+//        System.out.println("byBaseIndex: numNonZero(COLORS): " + store.numNonZero(COLORS));
+//        System.out.println("byBaseIndex: numNonZero(POS): " + store.numNonZero(POS));
     }
 }

@@ -1,14 +1,17 @@
-package listnode;
+package recursivelist;
 
-public abstract class BaseRecursible<T> implements IRecursible {
-    protected ListNode<T> head, tail;           // for doubly linked list role
-    protected ListNode<T> curr;                 // for accessor and iterator
+import recursivelist.util.SublistUtil;
+
+public class RecursiveList implements IRecursiveList{
+    protected IRecursiveNode head, tail;           // for doubly linked list role
+    protected IRecursiveNode curr;                 // for accessor and iterator
     protected int top;//                        // top = length-1
-    protected int start, end, inci, rowi;       // itr vals
+    protected int start, end, inci, rowi;       // itr values
     protected boolean sizeChanged;              // trigger clear range on rewind
-    protected boolean throwOnErr;
+    //protected final SublistUtil sublistUtil;
+    protected static final boolean THROW_ON_ERR = false;
 
-    BaseRecursible(){
+    public RecursiveList(){
         curr = head = tail = null;
         top = -1;
         rowi = 0;
@@ -16,7 +19,7 @@ public abstract class BaseRecursible<T> implements IRecursible {
         start = 0;
         end = 0;
         sizeChanged = true;
-        throwOnErr = false;
+        //sublistUtil = new SublistUtil(this);
     }
 
     // List functions: bookkeeping
@@ -42,9 +45,9 @@ public abstract class BaseRecursible<T> implements IRecursible {
     }
     protected final boolean assertValidIndex(int index){
         if( index > top || 0 > index){
-            if(throwOnErr){
+            if(THROW_ON_ERR){
                 throw new ArrayIndexOutOfBoundsException(
-                    String.format("index %d out of bounds; available index 0 through %d", index, top)
+                        String.format("index %d out of bounds; available index 0 through %d", index, top)
                 );
             }
             return false;
@@ -57,14 +60,14 @@ public abstract class BaseRecursible<T> implements IRecursible {
         for (
                 curr = head, rowi = 0;
                 rowi < index;
-                curr = curr.next, rowi++
+                curr = curr.getNext(), rowi++
         );
     }
     protected void seekBack( int index ){
         for (
                 curr = tail, rowi = top;
                 rowi > index;
-                curr = curr.prev, rowi--
+                curr = curr.getPrev(), rowi--
         );
     }
 
@@ -75,18 +78,19 @@ public abstract class BaseRecursible<T> implements IRecursible {
     @Override
     public boolean seek( int index ){
         index = this.fixNegIndex(index);
-        System.out.printf("seek index=%d\n", index );
+        //System.out.printf("seek index=%d\n", index );
         if(this.assertValidIndex(index)){
             if(index == rowi){
                 // Pass; already there
+                return true;
             }
             else if( index == rowi+1 ){
                 rowi = index;
-                curr = curr.next;
+                curr = curr.getNext();
             }
             else if( index == rowi - 1 ){
                 rowi = index;
-                curr = curr.prev;
+                curr = curr.getPrev();
             }
             else if( (top + 1 - index) < index ){
                 this.seekBack(index);
@@ -100,22 +104,22 @@ public abstract class BaseRecursible<T> implements IRecursible {
     }
 
     @Override
-    public ListNode<T> peekFront() {
+    public IRecursiveNode peekFront() {
         return head;
     }
     @Override
-    public ListNode<T> peekBack() {
+    public IRecursiveNode peekBack() {
         return tail;
     }
     @Override
-    public ListNode<T> peekIn( int index ) {
+    public IRecursiveNode peekIn( int index ) {
         return (this.seek(index))?
                 curr : null;
     }
 
     @Override
-    public void pushFront(ListNode newHead){
-        newHead.next = head;
+    public void pushFront(IRecursiveNode newHead){
+        newHead.setNext(head);
         if(top < 0){   // empty list
             tail = newHead;
         }
@@ -123,37 +127,37 @@ public abstract class BaseRecursible<T> implements IRecursible {
         this.incSize();
     }
     @Override
-    public void pushBack (ListNode newTail){
+    public void pushBack (IRecursiveNode newTail){
         if(top < 0){
             this.pushFront(newTail);
         }
         else{
-            newTail.prev = tail;
-            tail.next = newTail;
+            newTail.setPrev(tail);
+            tail.setNext(newTail);
             tail = newTail;
             this.incSize();
         }
     }
     @Override
-    public void pushIn(int index, ListNode node ){
+    public void pushIn(int index, IRecursiveNode node ){
         if( !this.seek( index )){
             return;
         }
-        node.prev = curr.prev;
-        node.prev.next = node;
-        node.next = curr;
-        curr.prev = node;
+        node.setPrev(curr.getPrev());
+        node.getPrev().setNext(node);
+        node.setNext(curr);
+        curr.setPrev(node);
         curr = node;
         rowi++;
         this.incSize();
     }
 
     @Override
-    public ListNode<T> popFront(){
+    public IRecursiveNode popFront(){
         if( top >= 0 ){
-            ListNode<T> victim = head;
-            head = victim.next;
-            head.prev = null;
+            IRecursiveNode victim = head;
+            head = victim.getNext();
+            head.setPrev(null);
             rowi = 0;
             curr = head;
             this.decSize();
@@ -164,11 +168,11 @@ public abstract class BaseRecursible<T> implements IRecursible {
         }
     }
     @Override
-    public ListNode<T> popBack(){
+    public IRecursiveNode popBack(){
         if( top >= 0 ){
-            ListNode<T> victim = tail;
-            tail = victim.prev;
-            tail.next = null;
+            IRecursiveNode victim = tail;
+            tail = victim.getPrev();
+            tail.setNext(null);
             rowi = top+1;
             curr = tail;
             this.decSize();
@@ -179,7 +183,7 @@ public abstract class BaseRecursible<T> implements IRecursible {
         }
     }
     @Override
-    public ListNode<T> popIn( int index) {
+    public IRecursiveNode popIn( int index) {
         if( index==0 ){
             return this.popFront();
         }
@@ -187,11 +191,11 @@ public abstract class BaseRecursible<T> implements IRecursible {
             return this.popBack();
         }
         else if(this.seek( index )){
-            ListNode<T> victim  = curr;
-            ListNode<T> prev = curr.prev;
-            ListNode<T> next= curr.next;
-            prev.next = next;
-            next.prev = prev;
+            IRecursiveNode victim  = curr;
+            IRecursiveNode prev = curr.getPrev();
+            IRecursiveNode next= curr.getNext();
+            prev.setNext(next);
+            next.setPrev(prev);
             curr = next;
             this.decSize();
             return victim;
@@ -225,10 +229,10 @@ public abstract class BaseRecursible<T> implements IRecursible {
     /* Iterator: manage pointer */
     protected void incCur(){
         if(inci < 0){
-            curr = curr.prev;
+            curr = curr.getPrev();
         }
         else{
-            curr = curr.next;
+            curr = curr.getNext();
         }
         rowi += inci;
     }
@@ -240,7 +244,7 @@ public abstract class BaseRecursible<T> implements IRecursible {
             clearRange();
         }
         //System.out.printf("rewind: top=%d, start=%d, end=%d, inci=%d", top, start, end, inci);
-        System.out.println();
+        //System.out.println();
         this.seek((inci < 0)? end : start);
     }
     @Override
@@ -253,8 +257,8 @@ public abstract class BaseRecursible<T> implements IRecursible {
         return start <= rowi && rowi <= end;
     }
     @Override
-    public ListNode<T> next() {
-        ListNode<T> ret = curr;
+    public IRecursiveNode next() {
+        IRecursiveNode ret = curr;
         //System.out.printf("next: rowi=%d\n", rowi );
         incCur();
         return ret;
@@ -262,8 +266,8 @@ public abstract class BaseRecursible<T> implements IRecursible {
 
     /* Splitter */
     @Override
-    public BaseRecursible sublist(int lo, int hi){
-        BaseRecursible<T> out = newList();
+    public IRecursiveList sublist(int lo, int hi){
+        IRecursiveList out = newList();
         this.setRange(lo, hi, 1);
         this.rewind();
         while(this.hasNext()){
@@ -271,43 +275,58 @@ public abstract class BaseRecursible<T> implements IRecursible {
         }
         return out;
     }
+
     @Override
-    public BaseRecursible sublist(Object criteria){
-        BaseRecursible<T> out = newList();
+    public IRecursiveList[] scopeDownLists() {
         this.clearRange();
         this.rewind();
+        int count = 0;
         while(this.hasNext()){
-            ListNode<T> next = this.next();
-            if(this.meetsCriteria(next, criteria))
-            out.pushBack(next.copy());
+            if(this.next().isRecursive()){
+                count++;
+            }
+        }
+        IRecursiveList[] out = new IRecursiveList[count];
+        this.rewind();
+        int i = 0;
+        while(this.hasNext()){
+            IRecursiveNode next = this.next();
+            if(next.isRecursive()){
+                out[i++] = next.getChildList();
+            }
+
         }
         return out;
     }
 
-    public BaseRecursible copy(){
-        BaseRecursible out = this.newList();
-        this.clearRange();
-        this.rewind();
-        while(this.hasNext()){
-            out.pushBack(new ListNode<>(this.next()));
-        }
-        return out;
+    @Override
+    public IRecursiveList newList() {
+        return null;
     }
 
     @Override
-    public ListNode[] toArray() {
-        ListNode[] out = new ListNode[this.size()];
+    public IRecursiveNode[] toArray(IRecursiveNode[] emptyArray) {
         this.clearRange();
         this.rewind();
         int i = 0;
         while(this.hasNext()){
-            out[i++] =new ListNode<>(this.next());
+            emptyArray[i++] = this.next();
+        }
+        return emptyArray;
+    }
+
+    public IRecursiveList copy(){
+        IRecursiveList out = this.newList();
+        this.clearRange();
+        this.rewind();
+        while(this.hasNext()){
+            out.pushBack(this.next());
         }
         return out;
     }
 
     @Override
-    public boolean recursible(){
+    public boolean isRecursive(){
         return true;
     }
 
@@ -317,9 +336,15 @@ public abstract class BaseRecursible<T> implements IRecursible {
         this.clearRange();
         this.rewind();
         while(this.hasNext()){
-            System.out.println(rowi + ": " + this.next());
+            IRecursiveNode node = this.next();
+            if(node.isRecursive()){
+                System.out.print(rowi + ": ");
+                node.getChildList().disp();
+            }
+            else{
+                System.out.println(rowi + ": " + node);
+            }
         }
         System.out.println("End display ItrList\n");
     }
-
 }

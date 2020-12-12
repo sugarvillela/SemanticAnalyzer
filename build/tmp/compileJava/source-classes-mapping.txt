@@ -1,18 +1,22 @@
+generated/patterns/Patterns.java
+ generated.patterns.Patterns
+ generated.patterns.Patterns$Pattern000
+ generated.patterns.Patterns$Pattern001
+ generated.patterns.Patterns$Pattern002
+ generated.patterns.Patterns$Pattern003
 store/StoreDiscrete.java
  store.StoreDiscrete
+ store.StoreDiscrete$ItrDiscrete
 generated/lists/ListDiscrete.java
  generated.lists.ListDiscrete
-rxcore/TestRunner.java
- rxcore.TestRunner
- rxcore.TestRunner$RunResult
-generated/code/DATATYPE.java
- generated.code.DATATYPE
 generated/DeleteMe.java
  generated.DeleteMe
 generated/lists/ListBoolean.java
  generated.lists.ListBoolean
-listnode/FlatList.java
- listnode.FlatList
+rxcore/ResultSetSourceLang.java
+ rxcore.ResultSetSourceLang
+recursivelist/IRecursiveList.java
+ recursivelist.IRecursiveList
 datasource/TextSource.java
  datasource.TextSource
 store/Store.java
@@ -22,78 +26,112 @@ store/Store.java
  store.Store$StoreInit
 semantic/Main.java
  semantic.Main
-search/BloomStore.java
- search.BloomStore
- search.BloomStore$BitStore
-datasource/TextSourceFile.java
- datasource.TextSourceFile
-listnode/BaseRecursible.java
- listnode.BaseRecursible
-rxcore/ITestResult.java
- rxcore.ITestResult
-rxcore/PositionalTest.java
- rxcore.PositionalTest
- rxcore.PositionalTest$StateNode
- rxcore.PositionalTest$TestResult
-toktools/Tokenizer.java
- toktools.Tokenizer
-datasource/TextSourceCsv.java
- datasource.TextSourceCsv
-search/DbSearch.java
- search.DbSearch
-generated/lists/ListString.java
- generated.lists.ListString
-erlog/Erlog.java
- erlog.Erlog
-flagobj/Flags.java
- flagobj.Flags
-listnode/NonRecursiveList.java
- listnode.NonRecursiveList
-search/QueryGen.java
- search.QueryGen
- search.QueryGen$1
- search.QueryGen$OP
- search.QueryGen$QueryGenBuilder
-flagobj/RecursiveFlags.java
- flagobj.RecursiveFlags
-store/StoreBoolean.java
- store.StoreBoolean
-store/StoreString.java
- store.StoreString
-store/IStore.java
- store.IStore
+store/StoreVote.java
+ store.StoreVote
+generated/rxwords/RxWords.java
+ generated.rxwords.RxWords
+ generated.rxwords.RxWords$RxWord010
+ generated.rxwords.RxWords$RxWordBase
+recursivelist/IRecursiveNode.java
+ recursivelist.IRecursiveNode
+generated/code/TEXT_PATTERN.java
+ generated.code.TEXT_PATTERN
+recursivelist/util/SublistUtil.java
+ recursivelist.util.SublistUtil
+generated/lists/ListVote.java
+ generated.lists.ListVote
+generated/patterns/PatternSourceLang.java
+ generated.patterns.PatternSourceLang
+generated/patterns/PatternDefinition.java
+ generated.patterns.PatternDefinition
 commons/BIT.java
  commons.BIT
-generated/lists/FlagStats.java
- generated.lists.FlagStats
- generated.lists.FlagStats$1
-store/StoreNumber.java
- store.StoreNumber
-listnode/ListNode.java
- listnode.ListNode
-generated/lists/ListScopes.java
- generated.lists.ListScopes
-listnode/RecursiveList.java
- listnode.RecursiveList
+recursivelist/FlagNode.java
+ recursivelist.FlagNode
+recursivelist/RecursiveNode.java
+ recursivelist.RecursiveNode
 search/HashFactory.java
  search.HashFactory
  search.HashFactory$FNV
  search.HashFactory$HashFunction
  search.HashFactory$Jenkins
  search.HashFactory$Murmur
-flagobj/IRx.java
- flagobj.IRx
 generated/lists/ListNumber.java
  generated.lists.ListNumber
-flagobj/IFlags.java
- flagobj.IFlags
-commons/Commons.java
- commons.Commons
-listnode/IRecursible.java
- listnode.IRecursible
+store/StoreNumber.java
+ store.StoreNumber
+ store.StoreNumber$ItrNumber
+rxcore/RxEngineTargLang.java
+ rxcore.RxEngineTargLang
+generated/code/DATATYPE.java
+ generated.code.DATATYPE
+store/util/VoteUtil.java
+ store.util.VoteUtil
+rxcore/RxEngineSourceLang.java
+ rxcore.RxEngineSourceLang
+rxcore/RxEngine.java
+ rxcore.RxEngine
+recursivelist/RecursiveList.java
+ recursivelist.RecursiveList
+search/BloomStore.java
+ search.BloomStore
+ search.BloomStore$BitStore
+datasource/TextSourceFile.java
+ datasource.TextSourceFile
+toktools/Tokenizer.java
+ toktools.Tokenizer
+datasource/TextSourceCsv.java
+ datasource.TextSourceCsv
+rxcore/ResultSetTargLang.java
+ rxcore.ResultSetTargLang
 generated/bloom/BloomData.java
  generated.bloom.BloomData
+recursivelist/factories/NodeFactory.java
+ recursivelist.factories.NodeFactory
 search/DbSearchUtil.java
  search.DbSearchUtil
+erlog/Erlog.java
+ erlog.Erlog
+generated/code/PATTERN_TYPE.java
+ generated.code.PATTERN_TYPE
+rxcore/ResultSet.java
+ rxcore.ResultSet
+search/QueryGen.java
+ search.QueryGen
+ search.QueryGen$1
+ search.QueryGen$OP
+ search.QueryGen$QueryGenBuilder
+store/StoreBoolean.java
+ store.StoreBoolean
+ store.StoreBoolean$ItrBoolean
+store/StoreString.java
+ store.StoreString
+ store.StoreString$ItrString
+generated/patterns/PatternTargLang.java
+ generated.patterns.PatternTargLang
+store/IStore.java
+ store.IStore
+ store.IStore$ItrStore
+generated/lists/FlagStats.java
+ generated.lists.FlagStats
+ generated.lists.FlagStats$1
+strategies/Strategies.java
+ strategies.Strategies
+ strategies.Strategies$WordTrait
 generated/code/WORD_TYPE.java
  generated.code.WORD_TYPE
+generated/lists/ListScopes.java
+ generated.lists.ListScopes
+generated/rxwords/RxWord.java
+ generated.rxwords.RxWord
+recursivelist/CharList.java
+ recursivelist.CharList
+rxcore/util/SourceLangTestUtil.java
+ rxcore.util.SourceLangTestUtil
+ rxcore.util.SourceLangTestUtil$StateNode
+commons/Commons.java
+ commons.Commons
+search/DbSearch.java
+ search.DbSearch
+generated/lists/ListString.java
+ generated.lists.ListString

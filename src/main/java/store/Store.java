@@ -4,106 +4,110 @@ package store;
 import commons.BIT;
 import generated.code.DATATYPE;
 import generated.lists.FlagStats;
+import store.util.VoteUtil;
 
 import java.util.Arrays;
 
 import static generated.code.DATATYPE.*;
 
 public class Store implements IStore {
-    private final IStore[] storeList;
-    private boolean byRange; // TODO future or delete
+    private final IStore[] storeList; // list of stores by datatype ordinal
 
     public Store() {
-        storeList = new StoreInit().getStore();
+        storeList = new StoreInit().getStoreList();
     }
+
+    public IStore getStore(int enu){
+        DATATYPE datatype = getDatatype(enu);
+        return storeList[datatype.ordinal()];
+    }
+
     public IStore getStore(DATATYPE datatype){
         return storeList[datatype.ordinal()];
     }
 
-    private DATATYPE datatypeByRange(int enu){
+    public VoteUtil getVoteUtil(){
+        return new VoteUtil(this);
+    }
+
+    private DATATYPE getDatatype(int enu){
         try{
-            byRange = true;
             return FlagStats.flagTypeByRange(enu);
-        }catch(IllegalStateException e){
-            byRange = false;
-            return FlagStats.flagTypeByBaseIndex(enu);
+        }catch(IllegalStateException e0){
+            try{
+                return FlagStats.flagTypeByBaseIndex(enu);
+            }catch(IllegalStateException e1){
+                throw new IllegalStateException(e1);
+            }
         }
     }
-    private DATATYPE datatypeByBaseIndex(int enu){
-        try{
-            byRange = false;
-            return FlagStats.flagTypeByBaseIndex(enu);
-        }catch(IllegalStateException e){
-            byRange = true;
-            return FlagStats.flagTypeByRange(enu);
-        }
-    }
+
     @Override
     public void set(int enu) {
-        DATATYPE datatype = datatypeByRange(enu);
-        System.out.printf("set com: %s: %X\n", datatype, enu);
+        DATATYPE datatype = getDatatype(enu);
+        //System.out.printf("set com: %s: %X\n", datatype, enu);
         storeList[datatype.ordinal()].set(enu);
     }
 
     @Override
     public void set(int enu, String val) {
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
-        System.out.printf("set str: %s: %X\n", datatype, enu);
+        DATATYPE datatype = this.getDatatype(enu);
+        //System.out.printf("set str: %s: %X\n", datatype, enu);
         storeList[datatype.ordinal()].set(enu, val);
     }
 
     @Override
     public void set(int enu, int val) {
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
-        System.out.printf("set int: %s: %X\n", datatype, enu);
+        DATATYPE datatype = this.getDatatype(enu);
+        //System.out.printf("set int: %s: %X\n", datatype, enu);
         storeList[datatype.ordinal()].set(enu, val);
     }
 
     @Override
     public void drop(int enu) {
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         storeList[datatype.ordinal()].drop(enu);
     }
 
     @Override
     public boolean getBoolean(int enu){
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         return storeList[datatype.ordinal()].getBoolean(enu);
     }
 
     @Override
     public int getNumber(int enu){
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         return storeList[datatype.ordinal()].getNumber(enu);
     }
 
     @Override
     public String getString(int enu){
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         return storeList[datatype.ordinal()].getString(enu);
     }
 
     @Override
     public Object get(int enu){
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         return storeList[datatype.ordinal()].get(enu);
     }
 
     @Override
     public int getState(int enu) {
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         return storeList[datatype.ordinal()].getState(enu);
     }
 
     @Override
     public int numNonZero(int enu) {
-        DATATYPE datatype = this.datatypeByBaseIndex(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         return storeList[datatype.ordinal()].numNonZero(enu);
     }
 
     @Override
     public boolean anyNonZero(int enu) {
-        DATATYPE datatype = this.datatypeByBaseIndex(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         return storeList[datatype.ordinal()].anyNonZero(enu);
     }
 
@@ -114,8 +118,18 @@ public class Store implements IStore {
         }
     }
 
+    @Override
+    public ItrStore getItr() {
+        return null;
+    }
+
+    @Override
+    public ItrStore getItr(int startEnu, int stopEnu) {
+        return null;
+    }
+
     public void get(int enu, Object caller, Object visitor){
-        DATATYPE datatype = FlagStats.flagTypeByRange(enu);
+        DATATYPE datatype = this.getDatatype(enu);
         switch (datatype){
             case LIST_DISCRETE:
             case LIST_NUMBER:
@@ -133,11 +147,11 @@ public class Store implements IStore {
         }
     }
 
-    public static class CompositeCalculations {// Do calc once and use for both Discrete and Boolean impl
+    public static class CompositeCalculations {// Do calc once for all composite implementations
         public final int wrow, wcol, wval;
         public final int rowMask, colMask, dataMask, valMask;
         public final int rowStart, colStart;
-        public final int[] compositeStore;
+        public final int[] compositeStore; // underlying array shared by composite stores
 
         public CompositeCalculations(){
             wrow = FlagStats.getWRow();
@@ -153,6 +167,7 @@ public class Store implements IStore {
             valMask = (1 << wval) - 1;
 
             int compositeSize = (FlagStats.getHighIndex(DATATYPE.LIST_BOOLEAN) >> rowStart) + 1;
+            // System.out.println("compositeSize: " + compositeSize);
             compositeStore = new int[compositeSize];
         }
 
@@ -185,13 +200,16 @@ public class Store implements IStore {
             storeList = new IStore[NUM_STORES];
 
             CompositeCalculations compositeCalculations = new CompositeCalculations();
-            compositeCalculations.disp();
+            //compositeCalculations.disp();
             storeList[LIST_STRING.ordinal()] =   new StoreString();
             storeList[LIST_NUMBER.ordinal()] =   new StoreNumber();
             storeList[LIST_DISCRETE.ordinal()] = new StoreDiscrete(compositeCalculations);
+            storeList[LIST_SCOPES.ordinal()] =   new StoreDiscrete(compositeCalculations);
+            storeList[LIST_VOTE.ordinal()] =     new StoreVote(compositeCalculations);
             storeList[LIST_BOOLEAN.ordinal()] =  new StoreBoolean(compositeCalculations);
+
         }
-        public IStore[] getStore(){
+        public IStore[] getStoreList(){
             return storeList;
         }
     }
