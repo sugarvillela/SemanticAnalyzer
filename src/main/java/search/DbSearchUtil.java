@@ -4,15 +4,11 @@ import commons.Commons;
 import datasource.TextSource;
 import datasource.TextSourceFile;
 import erlog.Erlog;
-import generated.code.WORD_TYPE;
+import generated.enums.WORD_TYPE;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
-
-import static generated.code.WORD_TYPE.*;
-import static generated.code.WORD_TYPE.SUFFIX;
 
 public class DbSearchUtil {
     private final DbSearch dbSearch;

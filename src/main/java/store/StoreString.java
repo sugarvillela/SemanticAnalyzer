@@ -1,18 +1,20 @@
 package store;
 
+import generated.enums.DATATYPE;
 import generated.lists.FlagStats;
 import generated.lists.ListString;
 
 import java.util.Arrays;
 
-import static generated.code.DATATYPE.LIST_STRING;
+import static generated.enums.DATATYPE.LIST_STRING;
 
-public class StoreString implements IStore {
+public class StoreString extends StoreBase {
     private final String[] store;
     private final int offset, size;
     private ItrStore itrInstance;
 
-    public StoreString() {
+    protected StoreString(DATATYPE datatype) {
+        super(datatype);
         size = FlagStats.getSize(LIST_STRING);
         offset = ListString.offset();
         store = new String[size];
@@ -79,6 +81,11 @@ public class StoreString implements IStore {
 
     @Override
     public boolean anyNonZero(int enu) {
+        return this.haveData();
+    }
+
+    @Override
+    public boolean haveData() {
         for(int i = 0; i < size; i++){
             if(store[i] != null){
                 return true;
@@ -88,18 +95,23 @@ public class StoreString implements IStore {
     }
 
     @Override
-    public void disp() {
-        //Commons.disp(store, "StoreString");
-        System.out.println(this.toString());
+    public void dispStore() {
+        if(this.haveData()){
+            System.out.println("  " + this.datatype.toString() + "{");
+            for(int i = 0; i< store.length; i++){
+                if(store[i] != null){
+                    System.out.printf("    %02d: %s \n", i, store[i]);
+                }
+            }
+            System.out.println("  }");
+        }
+        else{
+            System.out.println("  " + this.datatype.toString() + "{ empty }");
+        }
     }
 
     @Override
-    public ItrStore getItr() {
-        return null;
-    }
-
-    @Override
-    public ItrStore getItr(int startEnu, int stopEnu) {
+    public ItrStore getStoreItr(int startEnu, int stopEnu) {
         if(itrInstance == null){
             return (itrInstance = new ItrString(store, offset, startEnu, stopEnu));
         }
@@ -160,6 +172,16 @@ public class StoreString implements IStore {
             String value = store[rowCurr - offset];
             rowCurr++;
             return value;
+        }
+
+        @Override
+        public int nextState() {
+            throw new IllegalStateException("Dev err");
+        }
+
+        @Override
+        public Object nextObject() {
+            return nextString();
         }
     }
 }

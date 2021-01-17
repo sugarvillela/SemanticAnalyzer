@@ -2,13 +2,14 @@ package store;
 
 
 import commons.BIT;
-import generated.code.DATATYPE;
+import generated.enums.DATATYPE;
 import generated.lists.FlagStats;
+import rxword.interfaces.RxFun;
 import store.util.VoteUtil;
 
 import java.util.Arrays;
 
-import static generated.code.DATATYPE.*;
+import static generated.enums.DATATYPE.*;
 
 public class Store implements IStore {
     private final IStore[] storeList; // list of stores by datatype ordinal
@@ -112,37 +113,55 @@ public class Store implements IStore {
     }
 
     @Override
-    public void disp() {
+    public boolean haveData() {
         for(IStore iStore : storeList){
-            iStore.disp();
+            if(iStore.haveData()){
+                return true;
+            }
         }
+        return false;
     }
 
     @Override
-    public ItrStore getItr() {
+    public void dispStore() {
+        System.out.println(this.getClass().getSimpleName() + "{");
+//        this.getStore(LIST_STRING).dispStore();
+//        this.getStore(LIST_NUMBER).dispStore();
+//        this.getStore(LIST_VOTE).dispStore();
+//        this.getStore(LIST_BOOLEAN).dispStore();
+        for(IStore iStore : storeList){
+            iStore.dispStore();
+        }
+        System.out.println("}");
+    }
+
+    @Override
+    public ItrStore getStoreItr() {
         return null;
     }
 
     @Override
-    public ItrStore getItr(int startEnu, int stopEnu) {
-        return null;
+    public ItrStore getStoreItr(int startEnu, int stopEnu) {
+        DATATYPE datatype = this.getDatatype(startEnu);
+        return this.getStore(datatype).getStoreItr(startEnu, stopEnu);
     }
 
-    public void get(int enu, Object caller, Object visitor){
+    public void request(int enu, RxFun visitor){//not used...
         DATATYPE datatype = this.getDatatype(enu);
         switch (datatype){
             case LIST_DISCRETE:
             case LIST_NUMBER:
+            case LIST_VOTE:
                 int n = storeList[LIST_NUMBER.ordinal()].getNumber(enu);
-                //visitor.call(n, caller)
+                visitor.set(n);
                 break;
             case LIST_BOOLEAN:
                 boolean b = storeList[LIST_NUMBER.ordinal()].getBoolean(enu);
-                //visitor.call(b, caller)
+                visitor.set(b);
                 break;
             case LIST_STRING:
                 String s = storeList[LIST_STRING.ordinal()].getString(enu);
-                //visitor.call(b, caller)
+                visitor.set(s);
                 break;
         }
     }
@@ -196,17 +215,17 @@ public class Store implements IStore {
         private final IStore[] storeList;
 
         private StoreInit() {
-            final int NUM_STORES = DATATYPE.values().length;
+            final int NUM_STORES = 6;
             storeList = new IStore[NUM_STORES];
 
             CompositeCalculations compositeCalculations = new CompositeCalculations();
             //compositeCalculations.disp();
-            storeList[LIST_STRING.ordinal()] =   new StoreString();
-            storeList[LIST_NUMBER.ordinal()] =   new StoreNumber();
-            storeList[LIST_DISCRETE.ordinal()] = new StoreDiscrete(compositeCalculations);
-            storeList[LIST_SCOPES.ordinal()] =   new StoreDiscrete(compositeCalculations);
-            storeList[LIST_VOTE.ordinal()] =     new StoreVote(compositeCalculations);
-            storeList[LIST_BOOLEAN.ordinal()] =  new StoreBoolean(compositeCalculations);
+            storeList[LIST_STRING.ordinal()] =   new StoreString(LIST_STRING);
+            storeList[LIST_NUMBER.ordinal()] =   new StoreNumber(LIST_NUMBER);
+            storeList[LIST_DISCRETE.ordinal()] = new StoreDiscrete(compositeCalculations, LIST_DISCRETE);
+            storeList[LIST_SCOPES.ordinal()] =   new StoreDiscrete(compositeCalculations, LIST_SCOPES);
+            storeList[LIST_VOTE.ordinal()] =     new StoreVote(compositeCalculations, LIST_VOTE);
+            storeList[LIST_BOOLEAN.ordinal()] =  new StoreBoolean(compositeCalculations, LIST_BOOLEAN);
 
         }
         public IStore[] getStoreList(){

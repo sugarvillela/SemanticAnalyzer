@@ -1,6 +1,6 @@
 package semantic;
 
-import toktools.Tokenizer;
+import toktools.TokenizerSimple;
 
 public class Main {
 
@@ -9,8 +9,8 @@ public class Main {
     }
     public static void initAnalyzer(String[] args) {
         String text = args[0];
-        Tokenizer tok = new Tokenizer();
-        String[] toks = tok.toArr(text);
+        TokenizerSimple tok = new TokenizerSimple();
+        String[] toks = tok.getArray(text);
         commons.Commons.disp(toks, "Tokenized");
 //        ItrList<String> list = new ItrList<>(toks);
 //        list.rewind();

@@ -1,18 +1,20 @@
 package store;
 
+import generated.enums.DATATYPE;
 import generated.lists.FlagStats;
 import generated.lists.ListNumber;
 
 import java.util.Arrays;
 
-import static generated.code.DATATYPE.LIST_NUMBER;
+import static generated.enums.DATATYPE.LIST_NUMBER;
 
-public class StoreNumber implements IStore {
+public class StoreNumber extends StoreBase {
     private final int[] store;
     private final int offset, size;
     private ItrStore itrInstance;
 
-    public StoreNumber() {
+    protected StoreNumber(DATATYPE datatype) {
+        super(datatype);
         size = FlagStats.getSize(LIST_NUMBER);
         offset = ListNumber.offset();
         store = new int[size];
@@ -56,7 +58,7 @@ public class StoreNumber implements IStore {
 
     @Override
     public Object get(int enu) {
-        return getNumber(enu);
+        return (store[enu - offset] == -1)? null : store[enu - offset];
     }
 
     @Override
@@ -77,6 +79,11 @@ public class StoreNumber implements IStore {
 
     @Override
     public boolean anyNonZero(int enu) {
+        return haveData();
+    }
+
+    @Override
+    public boolean haveData() {
         for(int i = 0; i < size; i++){
             if(store[i] != -1){
                 return true;
@@ -86,18 +93,23 @@ public class StoreNumber implements IStore {
     }
 
     @Override
-    public void disp() {
-        //Commons.disp(store, "StoreNumber");
-        System.out.println(this.toString());
+    public void dispStore() {
+        if(this.haveData()){
+            System.out.println("  " + this.datatype.toString() + "{");
+            for(int i = 0; i< store.length; i++){
+                if(store[i] != -1){
+                    System.out.printf("    %02d: %d \n", i, store[i]);
+                }
+            }
+            System.out.println("  }");
+        }
+        else{
+            System.out.println("  " + this.datatype.toString() + "{ empty }");
+        }
     }
 
     @Override
-    public ItrStore getItr() {
-        return null;
-    }
-
-    @Override
-    public ItrStore getItr(int startEnu, int stopEnu) {
+    public ItrStore getStoreItr(int startEnu, int stopEnu) {
         if(itrInstance == null){
             return (itrInstance = new ItrNumber(store, offset, startEnu, stopEnu));
         }
@@ -158,6 +170,17 @@ public class StoreNumber implements IStore {
         @Override
         public String nextString() {
             return String.valueOf(this.nextNumber());
+        }
+
+        @Override
+        public int nextState() {
+            return this.nextNumber();
+        }
+
+        @Override
+        public Object nextObject() {
+            int n = this.nextNumber();
+            return (n == -1)? null : n;
         }
     }
 }

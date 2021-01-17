@@ -1,8 +1,10 @@
 package store;
 
+import generated.enums.DATATYPE;
+
 public class StoreVote extends StoreDiscrete{
-    public StoreVote(Store.CompositeCalculations calc) {
-        super(calc);
+    public StoreVote(Store.CompositeCalculations calc, DATATYPE datatype) {
+        super(calc, datatype);
     }
     @Override
     public void set(int enu){

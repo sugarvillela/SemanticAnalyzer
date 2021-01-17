@@ -1,8 +1,7 @@
 package store;
 
 import commons.Commons;
-import generated.code.DATATYPE;
-import generated.lists.FlagStats;
+import generated.enums.DATATYPE;
 import store.util.VoteUtil;
 
 import static generated.lists.ListString.*;
@@ -94,7 +93,7 @@ public class StoreTest {
         store.set(JAPANESE);//discrete
         store.set(CAP_FIRST);//boolean WORD_CONTAINS
         store.set(CAP_ALL);//boolean WORD_CONTAINS
-        store.disp();
+        store.dispStore();
 
         System.out.println("getBoolean(ORIG): " + store.getBoolean(ORIG));
         System.out.println("getString(ORIG): " + store.getString(ORIG));
@@ -147,16 +146,18 @@ public class StoreTest {
         store.set(NAME);
         //store.set(NOUN);
         store.set(PREP);
+        store.set(PREP);
+        store.set(PREP);
         //store.set(PREP_ADV);
         store.set(PRONOUN);
         //store.set(VERB);
         int startEnu = 0x05301000;  // ADJ
         int stopEnu = 0x07410000;   // VERB
-        IStore.ItrStore itr = store.getStore(DATATYPE.LIST_VOTE).getItr(startEnu, stopEnu);
-        int i = 20;
-        while(itr.hasNext() && 0 < i--){
-            int valCurr = itr.nextNumber();
-            System.out.printf("output: valCurr=%d \n", valCurr);
+        IStore.ItrStore itr = store.getStore(DATATYPE.LIST_VOTE).getStoreItr();//(startEnu, stopEnu);
+        int i = 0;
+        while(itr.hasNext() && 40 > i++){
+            //System.out.printf("%02d: %s \n", i, itr.nextNumber());
+            System.out.printf("%02d: %s \n", i, itr.nextString());
         }
         //voteUtil.tallyVotes(start, stop);
     }
@@ -180,7 +181,7 @@ public class StoreTest {
 
         int startEnu = 0x015000004; //COORDINATING
         int stopEnu = 0x015001000; //RECIPROCAL
-        IStore.ItrStore itr = store.getStore(DATATYPE.LIST_BOOLEAN).getItr(startEnu, stopEnu);
+        IStore.ItrStore itr = store.getStore(DATATYPE.LIST_BOOLEAN).getStoreItr(startEnu, stopEnu);
         int i = 20;
         while(itr.hasNext() && 0 < i--){
             int valCurr = itr.nextNumber();
@@ -195,7 +196,7 @@ public class StoreTest {
 
         int startEnu = 0x01; //
         int stopEnu = 0x03; //
-        IStore.ItrStore itrString = store.getStore(DATATYPE.LIST_STRING).getItr(startEnu, stopEnu);
+        IStore.ItrStore itrString = store.getStore(DATATYPE.LIST_STRING).getStoreItr(startEnu, stopEnu);
         int i = 20;
         while(itrString.hasNext() && 0 < i--){
             int key = itrString.nextKey();
@@ -208,13 +209,66 @@ public class StoreTest {
 
         startEnu = VALUE; //
         stopEnu = EE; //
-        IStore.ItrStore itrNumber = store.getStore(VALUE).getItr(startEnu, stopEnu);
+        IStore.ItrStore itrNumber = store.getStore(VALUE).getStoreItr(startEnu, stopEnu);
         i = 20;
         while(itrNumber.hasNext() && 0 < i--){
             int key = itrNumber.nextKey();
             int valCurr = itrNumber.nextNumber();
             System.out.printf("%d: valCurr=%d \n", key, valCurr);
         }
+    }
+    private static void loadStore(Store store){
+        store.set(NUM_LIST);//00 = 4 vote
+        store.set(NUM_LIST);
+        store.set(NUM_LIST);
+        store.set(NUM_LIST);
+
+        store.set(ADJ);//13 = 5
+        store.set(ADJ);
+        store.set(ADJ);
+        store.set(ADJ);
+        store.set(ADJ);
+        store.set(CONJUNCTION);//15 = 1
+        store.set(DETERMINER);//16 = 2
+        store.set(DETERMINER);
+        store.set(IRREG);//17 = 1
+        store.set(NAME);//19 = 1
+
+        store.set(PREP);//21 = 7
+        store.set(PREP);
+        store.set(PREP);
+        store.set(PREP);
+        store.set(PREP);
+        store.set(PREP);
+        store.set(PREP);
+
+        store.set(PRONOUN);//23 = 1
+        store.set(VERB);//24 = 1
+
+        store.set(DONE);//2 discrete
+        store.set(CHINESE);//4
+        store.set(PERSON2);//12
+
+        store.set(AMPERSAND);//0  boolean
+        store.set(BACK_SLASH);//2
+        store.set(POUND);//4
+        store.set(COORDINATING);
+        store.set(DEFINITE);
+        store.set(DISTRIBUTIVE);
+        store.set(LINKING);
+        store.set(POSSESSIVE);
+        store.set(RECIPROCAL);
+
+        store.set(IN, "love bug");
+        store.set(ORIG, "the new original");
+        store.set(EXPAND1, "fluffy tiger");
+        store.set(VALUE, 69);
+        store.set(EE, 6);
+    }
+    public static void testItrAll(){
+        Store store = new Store();
+        loadStore(store);
+        store.dispStore();
     }
     public static void anyNonZeroDiscrete(){
 //        Store store = new Store();

@@ -1,5 +1,5 @@
 // Generated file, do not edit
-// Last write: 12/03/2020 21:23:09
+// Last write: 01/13/2021 23:55:00
 package generated.lists;
 
 public class ListScopes {
@@ -17,14 +17,14 @@ public class ListScopes {
         ) {
             return "SCOPES";
         }
-        throw new IllegalStateException(String.format("Dev err: unknown datatype: 0x%X", index));
+        throw new IllegalStateException("Dev err: unknown datatype");
     }
     public static String categoryByBaseIndex (int index) {
         switch (index) {
             case 0x02000000:
                 return "SCOPES";
             default:
-                throw new IllegalStateException(String.format("Dev err: unknown datatype: 0x%X", index));
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
     public static int baseIndexByRange (int index) {
@@ -33,37 +33,36 @@ public class ListScopes {
         ) {
             return 0x02000000;
         }
-        throw new IllegalStateException(String.format("Dev err: unknown datatype: 0x%X", index));
+        throw new IllegalStateException("Dev err: unknown datatype");
     }
+    // for monotonic values across different arrays
     public static int offset () {
         return 0x02;
     }
-
-    public static int topScope(){
-        return ALL;
-    }
-
-    public static int bottomScope(){
-        return CHAR;
-    }
-
-    public static int nextScopeDown(int index){
+    // for debug or user-friendly display
+    public static String nameByIndex (int index) {
         switch (index) {
             case ALL:
-                return SENTENCE;
+                return "ALL";
             case SENTENCE:
-                return PHRASE;
+                return "SENTENCE";
             case PHRASE:
-                return WORD;
+                return "PHRASE";
             case WORD:
-                return CHAR;
+                return "WORD";
             case CHAR:
-                return 0;
+                return "CHAR";
             default:
-                throw new IllegalStateException(String.format("Dev err: unknown datatype: 0x%X", index));
+                return "none";
         }
     }
-    public static int nextScopeUp(int index){
+    public static int topScope () {
+        return ALL;
+    }
+    public static int bottomScope () {
+        return CHAR;
+    }
+    public static int nextScopeUp (int index) {
         switch (index) {
             case ALL:
                 return 0;
@@ -76,25 +75,23 @@ public class ListScopes {
             case CHAR:
                 return WORD;
             default:
-                throw new IllegalStateException(String.format("Dev err: unknown datatype: 0x%X", index));
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
-    public static String nameByIndex(int index){
-        switch(index){
-            case ALL:
-                return "ALL";
-            case SENTENCE:
-                return "SENTENCE";
-            case PHRASE:
-                return "PHRASE";
-            case WORD:
-                return "WORD";
+    public static int nextScopeDown (int index) {
+        switch (index) {
             case CHAR:
-                return "CHAR";
+                return 0;
+            case WORD:
+                return CHAR;
+            case PHRASE:
+                return WORD;
+            case SENTENCE:
+                return PHRASE;
+            case ALL:
+                return SENTENCE;
             default:
-                return String.format("name by index: bad index: 0x%X \n", index);
-                //throw new IllegalStateException(String.format("Dev err: unknown datatype: 0x%X", index));
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
-
 }

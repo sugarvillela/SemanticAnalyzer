@@ -36,7 +36,7 @@ public class VoteUtil {
     public boolean tallyVotes(int enuStart, int enuStop){
         bestScore = -1;
         tie = false;
-        IStore.ItrStore itr = store.getStore(enuStart).getItr(enuStart, enuStop);
+        IStore.ItrStore itr = store.getStore(enuStart).getStoreItr(enuStart, enuStop);
         while(itr.hasNext()){
             int currEnu = itr.nextKey();
             int currVal = itr.nextNumber();

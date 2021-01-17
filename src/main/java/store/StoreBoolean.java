@@ -1,20 +1,20 @@
 package store;
 
 import commons.BIT;
+import generated.enums.DATATYPE;
 
-public class StoreBoolean implements IStore {
+import java.util.ArrayList;
+
+public class StoreBoolean extends StoreBase {
     private final Store.CompositeCalculations calc;
     private final int[] store;
     private int seekRow;
     private ItrStore itrInstance;
 
-    public StoreBoolean(Store.CompositeCalculations calc) {
+    public StoreBoolean(Store.CompositeCalculations calc, DATATYPE datatype) {
+        super(datatype);
         this.calc = calc;
-        //wrow = calc.wrow;
         store = calc.compositeStore;
-        //rowStart = calc.rowStart;
-        //rowMask = calc.rowMask;
-       // dataMask = calc.dataMask;
     }
 
     /**Reads indexing info at left side of int word and sets seek variable(s)
@@ -91,21 +91,35 @@ public class StoreBoolean implements IStore {
     }
 
     @Override
-    public void disp() {
-        System.out.println("Store Boolean Display");
-        for(int i = 0; i < store.length; i++){
-            System.out.printf("%02d: %s \n", i, BIT.str(store[i]));
+    public boolean haveData() {
+        return false;
+    }
+
+    @Override
+    public void dispStore() {
+        ItrStore itr = this.getStoreItr();
+        ArrayList<String> out = new ArrayList<>();
+        int i = 0, nextNumber;
+        while(itr.hasNext()){
+            if((nextNumber = itr.nextNumber()) != 0){
+                out.add(String.format("    %02d: %d", i, nextNumber));
+            }
+            //out.add(String.format("    %02d: %X", i, itr.nextState()));
+            //out.add(String.format("    %02d: %d", i, itr.nextNumber()));
+            i++;
         }
-        System.out.println("======================");
+        if(out.isEmpty()){
+            System.out.println("  " + this.datatype.toString() + "{ empty }");
+        }
+        else{
+            System.out.println("  " + this.datatype.toString() + "{");
+            System.out.println(String.join("\n", out));
+            System.out.println("  }");
+        }
     }
 
     @Override
-    public ItrStore getItr() {
-        return null;
-    }
-
-    @Override
-    public ItrStore getItr(int startEnu, int stopEnu) {
+    public ItrStore getStoreItr(int startEnu, int stopEnu) {
         if(itrInstance == null){
             return (itrInstance = new ItrBoolean(startEnu, stopEnu, calc));
         }
@@ -125,7 +139,7 @@ public class StoreBoolean implements IStore {
         public ItrBoolean(int startEnu, int stopEnu, Store.CompositeCalculations calc) {
             this.calc = calc;
             numCols = calc.rowStart;
-            System.out.println("ItrBoolean construct: numCols" + numCols);
+            //System.out.println("ItrBoolean construct: numCols" + numCols);
             store = calc.compositeStore;
             rewind(startEnu, stopEnu);
         }
@@ -136,7 +150,7 @@ public class StoreBoolean implements IStore {
             maskCurr = startEnu & calc.dataMask;
             rowStop = (stopEnu >> calc.rowStart) & calc.rowMask;
             maskStop = stopEnu & calc.dataMask;
-            System.out.printf("rowCurr=%X, maskCurr=%X, rowStop=%X, maskStop=%X\n", rowCurr, maskCurr, rowStop, maskStop);
+            //System.out.printf("rowCurr=%X, maskCurr=%X, rowStop=%X, maskStop=%X\n", rowCurr, maskCurr, rowStop, maskStop);
         }
 
         @Override
@@ -152,8 +166,8 @@ public class StoreBoolean implements IStore {
         @Override
         public boolean nextBoolean() {
             boolean valCurr = (store[rowCurr] & maskCurr) != 0;
-            System.out.printf("rowCurr=%X, maskCurr=%X, valCurr=%b \n", rowCurr, maskCurr, valCurr);
-            BIT.disp(maskCurr);
+            //System.out.printf("rowCurr=%X, maskCurr=%X, valCurr=%b \n", rowCurr, maskCurr, valCurr);
+            //BIT.disp(maskCurr);
             maskCurr <<= 1;
             if(maskCurr == (1 << numCols) && rowCurr < rowStop){
                 rowCurr++;
@@ -169,7 +183,23 @@ public class StoreBoolean implements IStore {
 
         @Override
         public String nextString() {
-            return String.valueOf(this.nextBoolean());
+            return BIT.str(nextState());
+        }
+
+        @Override
+        public int nextState() {
+            int stateCurr = (store[rowCurr] & maskCurr) | (rowCurr << calc.rowStart);
+            maskCurr <<= 1;
+            if(maskCurr == (1 << numCols) && rowCurr < rowStop){
+                rowCurr++;
+                maskCurr = 1;
+            }
+            return stateCurr;
+        }
+
+        @Override
+        public Object nextObject() {
+            return nextBoolean();
         }
     }
 }

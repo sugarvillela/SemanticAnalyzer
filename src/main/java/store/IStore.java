@@ -55,11 +55,14 @@ public interface IStore {
      * @return true if any set or non-zero positions in the category specified */
     boolean anyNonZero(int enu);
 
-    void disp();
+    /**@return true if any element in datatype range has been set */
+    boolean haveData();
 
-    ItrStore getItr();
+    void dispStore();
 
-    ItrStore getItr(int startEnu, int stopEnu);
+    ItrStore getStoreItr();
+
+    ItrStore getStoreItr(int startEnu, int stopEnu);
 
     public interface ItrStore {
         void rewind(int startEnu, int stopEnu);
@@ -68,5 +71,7 @@ public interface IStore {
         boolean nextBoolean();
         int nextNumber();
         String nextString();
+        int nextState();
+        Object nextObject();
     }
 }

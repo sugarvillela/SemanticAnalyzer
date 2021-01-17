@@ -1,14 +1,19 @@
 package store;
 
 import commons.BIT;
+import generated.enums.DATATYPE;
+import generated.lists.FlagStats;
 
-public class StoreDiscrete implements IStore {
+import java.util.ArrayList;
+
+public class StoreDiscrete extends StoreBase {
     protected final Store.CompositeCalculations calc;
     protected final int[] store;
     protected int seekRow, seekCol;
     protected ItrStore itrInstance;
 
-    public StoreDiscrete(Store.CompositeCalculations calc) {
+    public StoreDiscrete(Store.CompositeCalculations calc, DATATYPE datatype) {
+        super(datatype);
         this.calc = calc;
         store = calc.compositeStore;
     }
@@ -90,21 +95,41 @@ public class StoreDiscrete implements IStore {
     }
 
     @Override
-    public void disp(){
-        System.out.println("Store Discrete Display");
-        for(int i = 0; i < store.length; i++){
-            System.out.printf("%02d: %s \n", i, BIT.str(store[i]));
+    public boolean haveData() {
+        ItrStore itr = this.getStoreItr();
+        while(itr.hasNext()){
+            if(itr.nextNumber() != 0){
+                return true;
+            }
         }
-        System.out.println("======================");
+        return false;
     }
 
     @Override
-    public ItrStore getItr() {
-        return null;
+    public void dispStore(){
+        ItrStore itr = this.getStoreItr();
+        ArrayList<String> out = new ArrayList<>();
+        int i = 0, nextNumber;
+        while(itr.hasNext()){
+            if((nextNumber = itr.nextNumber()) != 0){
+                out.add(String.format("    %02d: %d", i, nextNumber));
+            }
+            //out.add(String.format("    %02d: %X", i, itr.nextState()));
+            //out.add(String.format("    %02d: %d", i, itr.nextNumber()));
+            i++;
+        }
+        if(out.isEmpty()){
+            System.out.println("  " + this.datatype.toString() + "{ empty }");
+        }
+        else{
+            System.out.println("  " + this.datatype.toString() + "{");
+            System.out.println(String.join("\n", out));
+            System.out.println("  }");
+        }
     }
 
     @Override
-    public ItrStore getItr(int startEnu, int stopEnu) {
+    public ItrStore getStoreItr(int startEnu, int stopEnu) {
         if(itrInstance == null){
             return (itrInstance = new ItrDiscrete(startEnu, stopEnu, calc));
         }
@@ -145,6 +170,7 @@ public class StoreDiscrete implements IStore {
             colCurr = (startEnu >> calc.colStart) & calc.colMask;
             rowStop = (stopEnu >> calc.rowStart) & calc.rowMask;
             colStop = (stopEnu >> calc.colStart) & calc.colMask;
+            //System.out.printf("Rewind... start(%d:%d)  stop(%d:%d) \n", rowCurr, colCurr, rowStop, colStop);
         }
 
         @Override
@@ -165,10 +191,10 @@ public class StoreDiscrete implements IStore {
         @Override
         public int nextNumber() {
             int shift = colCurr * calc.wval;
-            int mask =  calc.valMask << shift;
-            int valCurr = (store[rowCurr] >> shift) &  calc.valMask;
-            System.out.printf("rowCurr=%d, colCurr=%d, valCurr=%d \n", rowCurr, colCurr, valCurr);
-            BIT.disp(mask);
+            int valCurr = (store[rowCurr] >> shift) & calc.valMask;
+
+            //System.out.printf("rowCurr=%d, colCurr=%d, valCurr=%d \n", rowCurr, colCurr, valCurr);
+            //System.out.printf("%d:%d: %s \n", rowCurr, colCurr, BIT.str(store[rowCurr]));
             colCurr++;
             if(colCurr == numCols && rowCurr < rowStop){
                 rowCurr++;
@@ -179,7 +205,27 @@ public class StoreDiscrete implements IStore {
 
         @Override
         public String nextString() {
-            return String.valueOf(this.nextNumber());
+            int r = rowCurr, c = colCurr, val = store[rowCurr];
+            return String.format("%d:%d: val %d %s \n", r, c, nextNumber(), BIT.str(val));
+            //return BIT.str(nextState());
+        }
+
+        @Override
+        public int nextState() {
+            int shift = colCurr * calc.wval;
+            int mask =  calc.valMask << shift;
+            int valCurr = (store[rowCurr] & mask) | (rowCurr << calc.rowStart);
+            colCurr++;
+            if(colCurr == numCols && rowCurr < rowStop){
+                rowCurr++;
+                colCurr = 0;
+            }
+            return valCurr;
+        }
+
+        @Override
+        public Object nextObject() {
+            return nextNumber();
         }
     }
 }

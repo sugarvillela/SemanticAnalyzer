@@ -1,9 +1,9 @@
 // Generated file, do not edit
-// Last write: 12/03/2020 21:23:09
+// Last write: 01/13/2021 23:55:00
 package generated.lists;
 
-import generated.code.DATATYPE;
-import static generated.code.DATATYPE.*;
+import generated.enums.DATATYPE;
+import static generated.enums.DATATYPE.*;
 
 public class FlagStats {
     // Pass enu value to get type:
@@ -29,16 +29,16 @@ public class FlagStats {
             return LIST_SCOPES;
         }
         if (
-            (0x03000001 <= index && index <= 0x0D410000)
+            (0x03000001 <= index && index <= 0x0D301000)
         ) {
             return LIST_VOTE;
         }
         if (
-            (0x0F000001 <= index && index <= 0x015004000)
+            (0x0E000001 <= index && index <= 0x014004000)
         ) {
             return LIST_BOOLEAN;
         }
-        throw new IllegalStateException(String.format("Dev err: unknown datatype: 0x%X", index));
+        throw new IllegalStateException("Dev err: unknown datatype");
     }
     // Pass base index (category name) to get type:
     public static DATATYPE flagTypeByBaseIndex (int index) {
@@ -55,24 +55,25 @@ public class FlagStats {
             case 0x02000000:
                 return LIST_SCOPES;
             case 0x03000000:
-            case 0x05000001:
-            case 0x05301000:
-            case 0x08000001:
-            case 0x09301000:
-            case 0x0A000001:
-            case 0x0D100010:
-            case 0x0D301000:
+            case 0x03200000:
+            case 0x04000000:
+            case 0x06200000:
+            case 0x07400000:
+            case 0x09200000:
+            case 0x09400000:
+            case 0x0D000000:
+            case 0x0D200000:
                 return LIST_VOTE;
+            case 0x0E000000:
             case 0x0F000000:
             case 0x010000000:
             case 0x011000000:
             case 0x012000000:
             case 0x013000000:
             case 0x014000000:
-            case 0x015000000:
                 return LIST_BOOLEAN;
             default:
-                throw new IllegalStateException(String.format("Dev err: unknown datatype: 0x%X", index));
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
     // Store Settings:
@@ -101,7 +102,7 @@ public class FlagStats {
             case LIST_BOOLEAN:
                 return 0x05A;
             default:
-                throw new IllegalStateException(String.format("Dev err: unknown datatype: %s", datatype.toString()));
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
     public static int getLowIndex (DATATYPE datatype) {
@@ -117,9 +118,9 @@ public class FlagStats {
             case LIST_VOTE:
                 return 0x03000001;
             case LIST_BOOLEAN:
-                return 0x0F000001;
+                return 0x0E000001;
             default:
-                throw new IllegalStateException(String.format("Dev err: unknown datatype: %s", datatype.toString()));
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
     public static int getHighIndex (DATATYPE datatype) {
@@ -133,11 +134,11 @@ public class FlagStats {
             case LIST_SCOPES:
                 return 0x02000005;
             case LIST_VOTE:
-                return 0x0D410000;
+                return 0x0D301000;
             case LIST_BOOLEAN:
-                return 0x015004000;
+                return 0x014004000;
             default:
-                throw new IllegalStateException(String.format("Dev err: unknown datatype: %s", datatype.toString()));
+                throw new IllegalStateException("Dev err: unknown datatype");
         }
     }
 }

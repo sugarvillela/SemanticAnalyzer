@@ -1,55 +1,106 @@
-generated/patterns/Patterns.java
- generated.patterns.Patterns
- generated.patterns.Patterns$Pattern000
- generated.patterns.Patterns$Pattern001
- generated.patterns.Patterns$Pattern002
- generated.patterns.Patterns$Pattern003
+rxfxcore/interfaces/FxWord.java
+ rxfxcore.interfaces.FxWord
+ rxfxcore.interfaces.FxWord$StringData
+ rxfxcore.interfaces.FxWord$TargetData
+generated/patterns/FxWords.java
+ generated.patterns.FxWords
+ generated.patterns.FxWords$FxWord000A
+ generated.patterns.FxWords$FxWord000B
+ generated.patterns.FxWords$FxWord100A
+ generated.patterns.FxWords$FxWord101A
+ generated.patterns.FxWords$FxWord102A
+ generated.patterns.FxWords$FxWord103A
 store/StoreDiscrete.java
  store.StoreDiscrete
  store.StoreDiscrete$ItrDiscrete
 generated/lists/ListDiscrete.java
  generated.lists.ListDiscrete
-generated/DeleteMe.java
- generated.DeleteMe
+generated/enums/DATATYPE.java
+ generated.enums.DATATYPE
 generated/lists/ListBoolean.java
  generated.lists.ListBoolean
-rxcore/ResultSetSourceLang.java
- rxcore.ResultSetSourceLang
 recursivelist/IRecursiveList.java
  recursivelist.IRecursiveList
+ recursivelist.IRecursiveList$ListItr
+ recursivelist.IRecursiveList$SimpleListener
+recursivelist/util/FlagNodeUtil.java
+ recursivelist.util.FlagNodeUtil
 datasource/TextSource.java
  datasource.TextSource
-store/Store.java
- store.Store
- store.Store$1
- store.Store$CompositeCalculations
- store.Store$StoreInit
+rxfxcore/interfaces/RxEngine.java
+ rxfxcore.interfaces.RxEngine
 semantic/Main.java
  semantic.Main
+rxfxcore/rximpl_s/RxResultMergedS.java
+ rxfxcore.rximpl_s.RxResultMergedS
+generated/patterns/FxPatterns.java
+ generated.patterns.FxPatterns
+ generated.patterns.FxPatterns$FxPattern000
+ generated.patterns.FxPatterns$FxPattern100
+ generated.patterns.FxPatterns$FxPattern101
+ generated.patterns.FxPatterns$FxPattern102
+ generated.patterns.FxPatterns$FxPattern103
+rxfxcore/interfaces/RxPattern.java
+ rxfxcore.interfaces.RxPattern
 store/StoreVote.java
  store.StoreVote
-generated/rxwords/RxWords.java
- generated.rxwords.RxWords
- generated.rxwords.RxWords$RxWord010
- generated.rxwords.RxWords$RxWordBase
 recursivelist/IRecursiveNode.java
  recursivelist.IRecursiveNode
-generated/code/TEXT_PATTERN.java
- generated.code.TEXT_PATTERN
-recursivelist/util/SublistUtil.java
- recursivelist.util.SublistUtil
+recursivelist/SharedExternalState.java
+ recursivelist.SharedExternalState
+strategies/Strategies.java
+ strategies.Strategies
+ strategies.Strategies$WordTrait
+rxfxcore/interfaces/FxAction.java
+ rxfxcore.interfaces.FxAction
 generated/lists/ListVote.java
  generated.lists.ListVote
-generated/patterns/PatternSourceLang.java
- generated.patterns.PatternSourceLang
-generated/patterns/PatternDefinition.java
- generated.patterns.PatternDefinition
+search/DbSearch.java
+ search.DbSearch
+generated/enums/TEXT_PATTERN.java
+ generated.enums.TEXT_PATTERN
+rxfxcore/RxFxEngine.java
+ rxfxcore.RxFxEngine
+rxword/interfaces/RxWord.java
+ rxword.interfaces.RxWord
+rxfxcore/rximpl_s/RxPatternS.java
+ rxfxcore.rximpl_s.RxPatternS
+ rxfxcore.rximpl_s.RxPatternS$StateNode
+rxfxcore/interfaces/FxPattern.java
+ rxfxcore.interfaces.FxPattern
+rxfxcore/util/ResultScopeT.java
+ rxfxcore.util.ResultScopeT
+rxfxcore/rximpl_t/RxResultT.java
+ rxfxcore.rximpl_t.RxResultT
+rxfxcore/util/ResultScope.java
+ rxfxcore.util.ResultScope
+datasource/StringSource.java
+ datasource.StringSource
 commons/BIT.java
  commons.BIT
+store/StoreBase.java
+ store.StoreBase
+rxfxcore/interfaces/FxEngine.java
+ rxfxcore.interfaces.FxEngine
+rxfxcore/rximpl_t/RxPatternT.java
+ rxfxcore.rximpl_t.RxPatternT
 recursivelist/FlagNode.java
  recursivelist.FlagNode
+rxfxcore/fximpl/FxActions.java
+ rxfxcore.fximpl.FxActions
+ rxfxcore.fximpl.FxActions$1
+ rxfxcore.fximpl.FxActions$FxDrop
+ rxfxcore.fximpl.FxActions$FxRem
+ rxfxcore.fximpl.FxActions$FxSet
+ rxfxcore.fximpl.FxActions$FxSetRuntimeData
+ rxfxcore.fximpl.FxActions$FxSplit
 recursivelist/RecursiveNode.java
  recursivelist.RecursiveNode
+rxfxcore/fximpl/FxWordS.java
+ rxfxcore.fximpl.FxWordS
+ rxfxcore.fximpl.FxWordS$TargetDataImpl
+rxfxcore/fximpl/FxEngineS.java
+ rxfxcore.fximpl.FxEngineS
 search/HashFactory.java
  search.HashFactory
  search.HashFactory$FNV
@@ -58,21 +109,42 @@ search/HashFactory.java
  search.HashFactory$Murmur
 generated/lists/ListNumber.java
  generated.lists.ListNumber
+rxfxcore/fximpl/FxPatternT.java
+ rxfxcore.fximpl.FxPatternT
 store/StoreNumber.java
  store.StoreNumber
  store.StoreNumber$ItrNumber
-rxcore/RxEngineTargLang.java
- rxcore.RxEngineTargLang
-generated/code/DATATYPE.java
- generated.code.DATATYPE
-store/util/VoteUtil.java
- store.util.VoteUtil
-rxcore/RxEngineSourceLang.java
- rxcore.RxEngineSourceLang
-rxcore/RxEngine.java
- rxcore.RxEngine
+generated/lists/ListString.java
+ generated.lists.ListString
+toktools/TokenizerSimple.java
+ toktools.TokenizerSimple
+recursivelist/IMark.java
+ recursivelist.IMark
+rxfxcore/util/ResultScopeS.java
+ rxfxcore.util.ResultScopeS
+generated/enums/PATTERN_TYPE.java
+ generated.enums.PATTERN_TYPE
+generated/enums/WORD_TYPE.java
+ generated.enums.WORD_TYPE
+recursivelist/util/ScopeUtil.java
+ recursivelist.util.ScopeUtil
 recursivelist/RecursiveList.java
  recursivelist.RecursiveList
+ recursivelist.RecursiveList$AccessUtil
+ recursivelist.RecursiveList$BreadthFirstItr
+ recursivelist.RecursiveList$DepthFirstItr
+ recursivelist.RecursiveList$FlatItr
+ recursivelist.RecursiveList$ItrBase
+ recursivelist.RecursiveList$KeyUtil
+ recursivelist.RecursiveList$SharedInternalState
+generated/patterns/RxPatterns.java
+ generated.patterns.RxPatterns
+ generated.patterns.RxPatterns$RxPattern000
+ generated.patterns.RxPatterns$RxPattern001
+ generated.patterns.RxPatterns$RxPattern100
+ generated.patterns.RxPatterns$RxPattern101
+ generated.patterns.RxPatterns$RxPattern102
+ generated.patterns.RxPatterns$RxPattern103
 search/BloomStore.java
  search.BloomStore
  search.BloomStore$BitStore
@@ -80,58 +152,130 @@ datasource/TextSourceFile.java
  datasource.TextSourceFile
 toktools/Tokenizer.java
  toktools.Tokenizer
+ toktools.Tokenizer$Builder
 datasource/TextSourceCsv.java
  datasource.TextSourceCsv
-rxcore/ResultSetTargLang.java
- rxcore.ResultSetTargLang
+rxfxcore/rximpl_s/RxEngineS.java
+ rxfxcore.rximpl_s.RxEngineS
+ rxfxcore.rximpl_s.RxEngineS$MergeUtil
+ rxfxcore.rximpl_s.RxEngineS$SplitUtil
+ rxfxcore.rximpl_s.RxEngineS$TargetUtil
+datasource/IntSource.java
+ datasource.IntSource
+rxfxcore/fximpl/FxEngineT.java
+ rxfxcore.fximpl.FxEngineT
+generated/lists/ListScopes.java
+ generated.lists.ListScopes
+generated/enums/ACTION.java
+ generated.enums.ACTION
 generated/bloom/BloomData.java
  generated.bloom.BloomData
-recursivelist/factories/NodeFactory.java
- recursivelist.factories.NodeFactory
 search/DbSearchUtil.java
  search.DbSearchUtil
 erlog/Erlog.java
  erlog.Erlog
-generated/code/PATTERN_TYPE.java
- generated.code.PATTERN_TYPE
-rxcore/ResultSet.java
- rxcore.ResultSet
+rxfxcore/fximpl/FxWordT.java
+ rxfxcore.fximpl.FxWordT
+ rxfxcore.fximpl.FxWordT$StringDataT
+rxfxcore/interfaces/RxResult.java
+ rxfxcore.interfaces.RxResult
+ rxfxcore.interfaces.RxResult$HitMapData
+ rxfxcore.interfaces.RxResult$OverlapData
+ rxfxcore.interfaces.RxResult$ScoreDataMerged
+ rxfxcore.interfaces.RxResult$ScoreDataSingle
+rxfxcore/rximpl_t/RxEngineT.java
+ rxfxcore.rximpl_t.RxEngineT
 search/QueryGen.java
  search.QueryGen
  search.QueryGen$1
  search.QueryGen$OP
  search.QueryGen$QueryGenBuilder
+commons/Commons.java
+ commons.Commons
 store/StoreBoolean.java
  store.StoreBoolean
  store.StoreBoolean$ItrBoolean
 store/StoreString.java
  store.StoreString
  store.StoreString$ItrString
-generated/patterns/PatternTargLang.java
- generated.patterns.PatternTargLang
+rxfxcore/fximpl/FxWordBase.java
+ rxfxcore.fximpl.FxWordBase
 store/IStore.java
  store.IStore
  store.IStore$ItrStore
+recursivelist/util/GroupDownUtil.java
+ recursivelist.util.GroupDownUtil
+datasource/ObjectSource.java
+ datasource.ObjectSource
 generated/lists/FlagStats.java
  generated.lists.FlagStats
  generated.lists.FlagStats$1
-strategies/Strategies.java
- strategies.Strategies
- strategies.Strategies$WordTrait
-generated/code/WORD_TYPE.java
- generated.code.WORD_TYPE
-generated/lists/ListScopes.java
- generated.lists.ListScopes
-generated/rxwords/RxWord.java
- generated.rxwords.RxWord
-recursivelist/CharList.java
- recursivelist.CharList
-rxcore/util/SourceLangTestUtil.java
- rxcore.util.SourceLangTestUtil
- rxcore.util.SourceLangTestUtil$StateNode
-commons/Commons.java
- commons.Commons
-search/DbSearch.java
- search.DbSearch
-generated/lists/ListString.java
- generated.lists.ListString
+rxfxcore/rximpl_s/RxResultS.java
+ rxfxcore.rximpl_s.RxResultS
+ rxfxcore.rximpl_s.RxResultS$HitMapDataS
+ rxfxcore.rximpl_s.RxResultS$OverlapDataS
+ rxfxcore.rximpl_s.RxResultS$ScoreDataMergedImpl
+ rxfxcore.rximpl_s.RxResultS$ScoreDataSingleImpl
+rxword/impl/RxFunRun.java
+ rxword.impl.RxFunRun
+generated/patterns/RxWords.java
+ generated.patterns.RxWords
+ generated.patterns.RxWords$RxWord000_00
+ generated.patterns.RxWords$RxWord000_01
+ generated.patterns.RxWords$RxWord000_02
+ generated.patterns.RxWords$RxWord001_00
+ generated.patterns.RxWords$RxWord001_01
+rxword/interfaces/RxFun.java
+ rxword.interfaces.RxFun
+rxword/interfaces/RxCompare.java
+ rxword.interfaces.RxCompare
+generated/funpatterns/RxFunPatterns.java
+ generated.funpatterns.RxFunPatterns
+ generated.funpatterns.RxFunPatterns$Example
+ generated.funpatterns.RxFunPatterns$RxFunPattern000_00_00
+ generated.funpatterns.RxFunPatterns$RxFunPattern000_01_00
+ generated.funpatterns.RxFunPatterns$RxFunPattern000_02_00
+ generated.funpatterns.RxFunPatterns$RxFunPattern001_00_00
+ generated.funpatterns.RxFunPatterns$RxFunPattern001_01_00
+store/util/VoteUtil.java
+ store.util.VoteUtil
+rxword/interfaces/RxFunPattern.java
+ rxword.interfaces.RxFunPattern
+rxword/impl/RxCompareImpl.java
+ rxword.impl.RxCompareImpl
+ rxword.impl.RxCompareImpl$RxCompareEqual
+ rxword.impl.RxCompareImpl$RxCompareGT
+ rxword.impl.RxCompareImpl$RxCompareLT
+rxword/impl/RxFunBase.java
+ rxword.impl.RxFunBase
+store/Store.java
+ store.Store
+ store.Store$1
+ store.Store$CompositeCalculations
+ store.Store$StoreInit
+rxword/impl/RxFunSpecials.java
+ rxword.impl.RxFunSpecials
+ rxword.impl.RxFunSpecials$EndsWith
+ rxword.impl.RxFunSpecials$Len
+ rxword.impl.RxFunSpecials$Range
+ rxword.impl.RxFunSpecials$StartsWith
+ rxword.impl.RxFunSpecials$StoreGetBoolean
+ rxword.impl.RxFunSpecials$StoreGetNumber
+ rxword.impl.RxFunSpecials$StoreGetState
+ rxword.impl.RxFunSpecials$StoreGetString
+ rxword.impl.RxFunSpecials$Substring
+ rxword.impl.RxFunSpecials$ValContainerInt
+ rxword.impl.RxFunSpecials$valContainerObject
+generated/funpatterns/RxFunctions.java
+ generated.funpatterns.RxFunctions
+ generated.funpatterns.RxFunctions$RxFun000_00_00_00
+ generated.funpatterns.RxFunctions$RxFun000_00_00_01
+ generated.funpatterns.RxFunctions$RxFun000_00_00_02
+rxword/impl/RxFunPatternBase.java
+ rxword.impl.RxFunPatternBase
+rxword/impl/RxWordImpl.java
+ rxword.impl.RxWordImpl
+generated/enums/RX_COMPARE.java
+ generated.enums.RX_COMPARE
+runstate/RunState.java
+ runstate.RunState

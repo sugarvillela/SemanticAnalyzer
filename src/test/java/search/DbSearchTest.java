@@ -3,13 +3,13 @@ package search;
 import commons.Commons;
 import datasource.TextSource;
 import datasource.TextSourceFile;
-import generated.code.WORD_TYPE;
+import generated.enums.WORD_TYPE;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static generated.code.WORD_TYPE.*;
+import static generated.enums.WORD_TYPE.*;
 
 public class DbSearchTest {
     public static void disp2d(String[][] arr){// util for debug

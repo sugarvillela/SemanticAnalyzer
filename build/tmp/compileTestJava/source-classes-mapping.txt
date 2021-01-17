@@ -1,12 +1,16 @@
 generated/bloom/BloomTest.java
  generated.bloom.BloomTest
-store/StoreTest.java
- store.StoreTest
-recursivelist/FlagNodeTest.java
- recursivelist.FlagNodeTest
+toktools/TestTokenizer.java
+ toktools.TestTokenizer
 search/DbSearchTest.java
  search.DbSearchTest
 semantic/TestMain.java
  semantic.TestMain
-rxcore/RxCoreTests.java
- rxcore.RxCoreTests
+recursivelist/FlagNodeTest.java
+ recursivelist.FlagNodeTest
+recursivelist/util/UtilTest.java
+ recursivelist.util.UtilTest
+rxfxcore/CoreTests.java
+ rxfxcore.CoreTests
+store/StoreTest.java
+ store.StoreTest
